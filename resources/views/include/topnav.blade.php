@@ -51,7 +51,10 @@
                         </form>
                     </ul>
                 </li>
-
+                <li class="nav-item d-flex justify-content-center w-100">
+                    <span
+                        class="d-none d-md-block">{{ \Carbon\Carbon::now()->locale('id')->isoFormat('dddd, D MMMM YYYY') }}</span>
+                </li>
                 <li class="nav-item topbar-user dropdown hidden-caret">
                     <a class="dropdown-toggle profile-pic" data-bs-toggle="dropdown" href="#"
                         aria-expanded="false">
@@ -59,7 +62,7 @@
                             <img src="assets/img/profile.jpg" alt="..." class="avatar-img rounded-circle">
                         </div>
                         <span class="profile-username">
-                            <span class="op-7">Hi,</span> <span class="fw-bold">Hizrian</span>
+                            <span class="op-7">Hi,</span> <span class="fw-bold">Admin</span>
                         </span>
                     </a>
                     <ul class="dropdown-menu dropdown-user animated fadeIn">
@@ -69,7 +72,7 @@
                                     <div class="avatar-lg"><img src="assets/img/profile.jpg" alt="image profile"
                                             class="rounded avatar-img"></div>
                                     <div class="u-text">
-                                        <h4>Hizrian</h4>
+                                        <h4>Admin</h4>
                                         <p class="text-muted">hello@example.com</p>
                                     </div>
                                 </div>

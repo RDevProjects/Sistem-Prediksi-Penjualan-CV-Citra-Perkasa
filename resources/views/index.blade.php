@@ -343,35 +343,19 @@
                     <nav class="pull-left">
                         <ul class="nav">
                             <li class="nav-item">
-                                <a class="nav-link" href="http://www.themekita.com">
-                                    ThemeKita
-                                </a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link" href="#">
-                                    Help
-                                </a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link" href="#">
-                                    Licenses
+                                <a class="nav-link" href="{{ route('home') }}">
+                                    {{ env('APP_NAME') }} | {{ env('AUTHORS') }}
                                 </a>
                             </li>
                         </ul>
                     </nav>
-                    <div class="copyright ms-auto">
-                        2024, made with <i class="fa fa-heart heart text-danger"></i> by <a
-                            href="http://www.themekita.com">ThemeKita</a>
-                    </div>
                 </div>
             </footer>
         </div>
 
     </div>
     @include('include.script')
-    <!-- Kaiadmin DEMO methods, don't include it in your project! -->
-    <script src="{{ asset('assets/js/setting-demo.js') }}"></script>
-    <script src="{{ asset('assets/js/demo.js') }}"></script>
+    <script src="{{ asset('assets/js/script.js') }}"></script>
     <script>
         $('#lineChart').sparkline([102, 109, 120, 99, 110, 105, 115], {
             type: 'line',
