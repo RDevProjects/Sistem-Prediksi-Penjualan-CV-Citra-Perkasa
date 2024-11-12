@@ -3,7 +3,7 @@
         <!-- Logo Header -->
         <div class="logo-header" data-background-color="dark">
 
-            <a href="index.html" class="logo">
+            <a href="{{ route('home') }}" class="logo">
                 <img src="{{ asset('assets/img/kaiadmin/logo_light.svg') }}" alt="navbar brand" class="navbar-brand"
                     height="20">
             </a>
@@ -59,7 +59,8 @@
                     <a class="dropdown-toggle profile-pic" data-bs-toggle="dropdown" href="#"
                         aria-expanded="false">
                         <div class="avatar-sm">
-                            <img src="assets/img/profile.jpg" alt="..." class="avatar-img rounded-circle">
+                            <img src="{{ asset('assets/img/profile.jpg') }}" alt="..."
+                                class="avatar-img rounded-circle">
                         </div>
                         <span class="profile-username">
                             <span class="op-7">Hi,</span> <span class="fw-bold">{{ Auth::user()->name }}</span>
@@ -69,8 +70,8 @@
                         <div class="dropdown-user-scroll scrollbar-outer">
                             <li>
                                 <div class="user-box">
-                                    <div class="avatar-lg"><img src="assets/img/profile.jpg" alt="image profile"
-                                            class="rounded avatar-img"></div>
+                                    <div class="avatar-lg"><img src="{{ asset('assets/img/profile.jpg') }}"
+                                            alt="image profile" class="rounded avatar-img"></div>
                                     <div class="u-text">
                                         <h4>{{ Auth::user()->name }}</h4>
                                         <p class="text-muted">{{ Auth::user()->email }}</p>
