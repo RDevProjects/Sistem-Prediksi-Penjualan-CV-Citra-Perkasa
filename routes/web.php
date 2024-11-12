@@ -1,13 +1,12 @@
 <?php
 
 use App\Http\Controllers\LoginController;
+use App\Http\Controllers\DashboardController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Middleware\isLogin;
 
 Route::middleware([isLogin::class])->group(function () {
-    Route::get('/', function () {
-        return view('index');
-    })->name('home');
+    Route::get('/', [DashboardController::class, 'index'])->name('home');
 });
 
 
