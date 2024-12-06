@@ -19,7 +19,7 @@
                 <i class="icon-arrow-right"></i>
             </li>
             <li class="nav-item">
-                <a href="">Tambah Data Admin</a>
+                <a href="">Edit Data Admin</a>
             </li>
         </ul>
     </div>

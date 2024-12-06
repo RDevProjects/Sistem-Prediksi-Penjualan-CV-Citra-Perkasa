@@ -3,6 +3,7 @@
 use App\Http\Controllers\LoginController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\PenjualanController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Middleware\isLogin;
 
@@ -16,6 +17,15 @@ Route::middleware([isLogin::class])->prefix('/dashboard')->group(function () {
         Route::get('/edit/{id}', [UserController::class, 'edit'])->name('edit.admin');
         Route::put('/update/{id}', [UserController::class, 'update'])->name('update.admin');
         Route::delete('/delete/{id}', [UserController::class, 'destroy'])->name('delete.admin');
+    });
+
+    Route::prefix('/penjualan')->group(function () {
+        Route::get('/', [PenjualanController::class, 'index'])->name('penjualan');
+        Route::get('/create', [PenjualanController::class, 'create'])->name('create.penjualan');
+        Route::post('/store', [PenjualanController::class, 'store'])->name('store.penjualan');
+        Route::get('/edit/{id}', [PenjualanController::class, 'edit'])->name('edit.penjualan');
+        Route::put('/update/{id}', [PenjualanController::class, 'update'])->name('update.penjualan');
+        Route::delete('/delete/{id}', [PenjualanController::class, 'destroy'])->name('delete.penjualan');
     });
 });
 

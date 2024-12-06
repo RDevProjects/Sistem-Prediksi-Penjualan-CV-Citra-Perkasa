@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('penjualan', function (Blueprint $table) {
             $table->id();
             $table->enum('bulan', ['Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember']);
-            $table->enum('tahun', ['2020', '2021', '2022', '2023', '2024', '2025']);
+            $table->string('tahun');
             $table->string('jumlah');
             $table->timestamps();
         });

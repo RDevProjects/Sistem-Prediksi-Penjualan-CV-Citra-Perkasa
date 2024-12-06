@@ -50,7 +50,7 @@
                     <h4 class="text-section">Data Penjualan</h4>
                 </li>
                 <li class="nav-item {{ Route::is('penjualan') ? 'active' : '' }}">
-                    <a href="{{ route('home') }}">
+                    <a href="{{ route('penjualan') }}">
                         <i class="far fa-credit-card"></i>
                         <p>Data Penjualan</p>
                     </a>

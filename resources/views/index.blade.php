@@ -178,7 +178,7 @@
                                     <th scope="col">Payment Number</th>
                                     <th scope="col">Bulan</th>
                                     <th scope="col" class="text-end">Tahun</th>
-                                    <th scope="col" class="text-end">Amount</th>
+                                    <th scope="col" class="text-end">Jumlah Penjualan</th>
                                     <th scope="col" class="text-end">Status</th>
                                 </tr>
                             </thead>
@@ -195,7 +195,7 @@
                                             {{ $penjualan->tahun }}
                                         </td>
                                         <td class="text-end">
-                                            Rp {{ number_format($penjualan->jumlah, 0, ',', '.') }}
+                                            {{ number_format($penjualan->jumlah, 0, ',', '.') }}
                                         </td>
                                         <td class="text-end">
                                             <button class="btn btn-icon btn-round btn-success btn-sm me-2">
