@@ -41,29 +41,37 @@
                     </div>
                 @endif
                 <div class="card-body">
-                    <form action="{{ route('store.admin') }}" method="POST">
+                    <form action="{{ route('update.admin', $user->id) }}" method="POST">
+                        @csrf
+                        @method('PUT')
                         @csrf
                         <div class="form-group">
                             <label for="name">Name</label>
                             <input type="text" class="form-control" id="name" name="name"
-                                placeholder="Enter Name" value="{{ old('name') }}" required />
+                                placeholder="Enter Name" value="{{ old('name', $user->name) }}" required />
                         </div>
                         <div class="form-group">
                             <label for="username">Username</label>
                             <input type="text" class="form-control" id="username" name="username"
-                                placeholder="Enter Username" value="{{ old('username') }}" required />
+                                placeholder="Enter Username" value="{{ old('name', $user->username) }}" required />
                         </div>
                         <div class="form-group">
                             <label for="email">Email Address</label>
                             <input type="email" class="form-control" id="email" name="email"
-                                placeholder="Enter Email" value="{{ old('email') }}" required />
+                                placeholder="Enter Email" value="{{ old('name', $user->email) }}" required />
                             <small id="emailHelp" class="form-text text-muted">Kami tidak akan pernah membagikan email Anda
                                 dengan orang lain.</small>
                         </div>
                         <div class="form-group">
-                            <label for="password">Password</label>
+                            <div class="d-flex justify-content-between align-items-center">
+                                <label for="password">Password</label>
+                                <div class="d-flex align-items-center">
+                                    <input type="checkbox" id="enablePassword" onclick="togglePassword()">
+                                    <p class="mb-0 ms-2">Edit Password</p>
+                                </div>
+                            </div>
                             <input type="password" class="form-control" id="password" name="password"
-                                placeholder="Enter Password" value="{{ old('password') }}" required />
+                                placeholder="Enter Password" value="{{ old('password') }}" disabled />
                         </div>
                         <div class="form-group">
                             <button type="submit" class="btn btn-success w-100">Submit</button>
@@ -74,3 +82,11 @@
         </div>
     </div>
 @endsection
+@push('script')
+    <script>
+        function togglePassword() {
+            var passwordInput = document.getElementById('password');
+            passwordInput.disabled = !passwordInput.disabled;
+        }
+    </script>
+@endpush

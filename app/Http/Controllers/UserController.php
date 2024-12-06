@@ -65,7 +65,7 @@ class UserController extends Controller
         $request->validate([
             'name' => 'required|string|max:255',
             'email' => 'required|string|email|max:255|unique:users,email,' . $id,
-            'password' => 'nullable|string|min:8|confirmed',
+            'password' => 'nullable|string|confirmed',
         ]);
 
         $user = User::findOrFail($id);
@@ -75,7 +75,7 @@ class UserController extends Controller
             'password' => $request->password ? bcrypt($request->password) : $user->password,
         ]);
 
-        return redirect()->route('users.index')->with('success', 'User updated successfully.');
+        return redirect()->route('admin')->with('success', 'Data user berhasil diperbarui.');
     }
 
     // Menghapus pengguna dari database
@@ -84,6 +84,6 @@ class UserController extends Controller
         $user = User::findOrFail($id);
         $user->delete();
 
-        return redirect()->route('admin')->with('success', 'User deleted successfully.');
+        return redirect()->route('admin')->with('success', 'Data user berhasil dihapus.');
     }
 }

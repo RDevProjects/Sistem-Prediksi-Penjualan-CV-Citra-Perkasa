@@ -14,7 +14,7 @@ Route::middleware([isLogin::class])->prefix('/dashboard')->group(function () {
         Route::get('/create', [UserController::class, 'create'])->name('create.admin');
         Route::post('/store', [UserController::class, 'store'])->name('store.admin');
         Route::get('/edit/{id}', [UserController::class, 'edit'])->name('edit.admin');
-        Route::post('/update/{id}', [UserController::class, 'update'])->name('update.admin');
+        Route::put('/update/{id}', [UserController::class, 'update'])->name('update.admin');
         Route::delete('/delete/{id}', [UserController::class, 'destroy'])->name('delete.admin');
     });
 });

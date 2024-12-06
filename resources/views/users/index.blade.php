@@ -13,7 +13,7 @@
                 <i class="icon-arrow-right"></i>
             </li>
             <li class="nav-item">
-                <a href="#">Data Admin</a>
+                <a href="{{ route('admin') }}">Data Admin</a>
             </li>
         </ul>
     </div>
@@ -25,22 +25,26 @@
                     <div class="card-title">Daftar Admin</div>
                 </div>
                 <div class="card-body">
-                    @if (session('success'))
-                        <div class="alert alert-success">
-                            {{ session('success') }}
-                        </div>
-                    @endif
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <div>
+                            @if (session('success'))
+                                <div class="alert alert-success">
+                                    {{ session('success') }}
+                                </div>
+                            @endif
 
-                    @if (session('error'))
-                        <div class="alert alert-danger">
-                            {{ session('error') }}
+                            @if (session('error'))
+                                <div class="alert alert-danger">
+                                    {{ session('error') }}
+                                </div>
+                            @endif
                         </div>
-                    @endif
-                    <div class="mb-3 text-end">
-                        <!-- Tombol Tambah Data -->
-                        <a href="{{ route('create.admin') }}" class="btn btn-primary btn-sm">
-                            <i class="bi bi-plus"></i> Tambah Admin
-                        </a>
+                        <div>
+                            <!-- Tombol Tambah Data -->
+                            <a href="{{ route('create.admin') }}" class="btn btn-primary btn-sm">
+                                <i class="bi bi-plus"></i> Tambah Admin
+                            </a>
+                        </div>
                     </div>
 
                     <table id="adminTable" class="table table-striped table-bordered" style="width:100%">
@@ -82,7 +86,7 @@
     </div>
 @endsection
 
-@section('script')
+@push('script')
     <!-- Include jQuery and DataTables JS & CSS -->
     <link href="https://cdn.datatables.net/1.11.5/css/dataTables.bootstrap5.min.css" rel="stylesheet">
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
@@ -117,4 +121,4 @@
             })
         }
     </script>
-@endsection
+@endpush

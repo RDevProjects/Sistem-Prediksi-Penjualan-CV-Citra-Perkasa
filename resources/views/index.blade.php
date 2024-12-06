@@ -311,7 +311,7 @@
         </div>
     </div>
 @endsection
-@section('script')
+@push('script')
     <script>
         $('#lineChart').sparkline([102, 109, 120, 99, 110, 105, 115], {
             type: 'line',
@@ -340,4 +340,4 @@
             fillColor: 'rgba(255, 165, 52, .14)'
         });
     </script>
-@endsection
+@endpush

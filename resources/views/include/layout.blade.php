@@ -22,7 +22,7 @@
     </div>
     @include('include.script')
     <script src="{{ asset('assets/js/script.js') }}"></script>
-    @yield('script')
+    @stack('script')
 </body>
 
 </html>
