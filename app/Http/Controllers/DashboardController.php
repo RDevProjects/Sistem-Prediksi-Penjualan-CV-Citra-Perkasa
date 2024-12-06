@@ -13,7 +13,7 @@ class DashboardController extends Controller
         $userCount = User::count();
         $penjualanCount = Penjualan::count();
 
-        $daftarPenjualan = Penjualan::latest()->get();
+        $daftarPenjualan = Penjualan::all();
 
         return view('index', compact('userCount','penjualanCount','daftarPenjualan'));
     }

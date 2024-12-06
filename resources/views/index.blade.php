@@ -82,7 +82,7 @@
             <div class="card card-round">
                 <div class="card-header">
                     <div class="card-head-row">
-                        <div class="card-title">User Statistics</div>
+                        <div class="card-title">Statik Penjualan</div>
                         <div class="card-tools">
                             <a href="#" class="btn btn-label-success btn-round btn-sm me-2">
                                 <span class="btn-label">
@@ -100,7 +100,7 @@
                     </div>
                 </div>
                 <div class="card-body">
-                    <div class="chart-container" style="min-height: 375px">
+                    <div class="chart-container" style="min-height: 300px">
                         <canvas id="statisticsChart"></canvas>
                     </div>
                     <div id="myChartLegend"></div>
@@ -111,7 +111,7 @@
             <div class="card card-primary card-round">
                 <div class="card-header">
                     <div class="card-head-row">
-                        <div class="card-title">Daily Sales</div>
+                        <div class="card-title">Rata-Rata Penjualan Perbulan</div>
                         <div class="card-tools">
                             <div class="dropdown">
                                 <button class="btn btn-sm btn-label-light dropdown-toggle" type="button"
@@ -127,24 +127,17 @@
                             </div>
                         </div>
                     </div>
-                    <div class="card-category">March 25 - April 02</div>
+                    <div class="card-category">{{ $daftarPenjualan->first()->bulan }} {{ $daftarPenjualan->first()->tahun }}
+                        -
+                        {{ $daftarPenjualan->last()->bulan }} {{ $daftarPenjualan->last()->tahun }}
+                    </div>
                 </div>
                 <div class="pb-0 card-body">
                     <div class="mt-2 mb-4">
-                        <h1>$4,578.58</h1>
+                        <h1>{{ number_format($daftarPenjualan->sum('jumlah'), 0, ',', '.') }}</h1>
                     </div>
-                    <div class="pull-in">
+                    <div class="pull-in" style="min-height: 250px">
                         <canvas id="dailySalesChart"></canvas>
-                    </div>
-                </div>
-            </div>
-            <div class="card card-round">
-                <div class="pb-0 card-body">
-                    <div class="h1 fw-bold float-end text-primary">+5%</div>
-                    <h2 class="mb-2">17</h2>
-                    <p class="text-muted">Users online</p>
-                    <div class="pull-in sparkline-fix">
-                        <div id="lineChart3"></div>
                     </div>
                 </div>
             </div>
@@ -214,31 +207,189 @@
 @endsection
 @push('script')
     <script>
-        $('#lineChart').sparkline([102, 109, 120, 99, 110, 105, 115], {
-            type: 'line',
-            height: '70',
-            width: '100%',
-            lineWidth: '2',
-            lineColor: '#177dff',
-            fillColor: 'rgba(23, 125, 255, 0.14)'
+        var ctx = document.getElementById("statisticsChart").getContext("2d");
+
+        var statisticsChart = new Chart(ctx, {
+            type: "line",
+            data: {
+                labels: ["Jan", "Feb", "Mar", "Apr", "Mei", "Jun", "Jul", "Agu", "Sep", "Okt", "Nov", "Des"],
+                datasets: [{
+                        label: "Penjualan",
+                        borderColor: "#f3545d",
+                        pointBackgroundColor: "rgba(243, 84, 93, 0.6)",
+                        pointRadius: 0,
+                        backgroundColor: "rgba(243, 84, 93, 0.4)",
+                        legendColor: "#f3545d",
+                        fill: true,
+                        borderWidth: 2,
+                        data: @json($daftarPenjualan->pluck('jumlah'))
+                    },
+                    {
+                        label: "Prediksi",
+                        borderColor: "#fdaf4b",
+                        pointBackgroundColor: "rgba(253, 175, 75, 0.6)",
+                        pointRadius: 0,
+                        backgroundColor: "rgba(253, 175, 75, 0.4)",
+                        legendColor: "#fdaf4b",
+                        fill: true,
+                        borderWidth: 2,
+                        data: [
+                            240, 270, 200, 220, 210, 190, 220, 210, 200, 250, 190, 220,
+                        ],
+                    },
+                ],
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                legend: {
+                    display: false,
+                },
+                tooltips: {
+                    bodySpacing: 4,
+                    mode: "nearest",
+                    intersect: 0,
+                    position: "nearest",
+                    xPadding: 10,
+                    yPadding: 10,
+                    caretPadding: 10,
+                },
+                layout: {
+                    padding: {
+                        left: 5,
+                        right: 5,
+                        top: 15,
+                        bottom: 15
+                    },
+                },
+                scales: {
+                    yAxes: [{
+                        ticks: {
+                            fontStyle: "500",
+                            beginAtZero: false,
+                            maxTicksLimit: 5,
+                            padding: 10,
+                        },
+                        gridLines: {
+                            drawTicks: false,
+                            display: false,
+                        },
+                    }, ],
+                    xAxes: [{
+                        gridLines: {
+                            zeroLineColor: "transparent",
+                        },
+                        ticks: {
+                            padding: 10,
+                            fontStyle: "500",
+                        },
+                    }, ],
+                },
+                legendCallback: function(chart) {
+                    var text = [];
+                    text.push('<ul class="' + chart.id + '-legend html-legend">');
+                    for (var i = 0; i < chart.data.datasets.length; i++) {
+                        text.push(
+                            '<li><span style="background-color:' +
+                            chart.data.datasets[i].legendColor +
+                            '"></span>'
+                        );
+                        if (chart.data.datasets[i].label) {
+                            text.push(chart.data.datasets[i].label);
+                        }
+                        text.push("</li>");
+                    }
+                    text.push("</ul>");
+                    return text.join("");
+                },
+            },
         });
 
-        $('#lineChart2').sparkline([99, 125, 122, 105, 110, 124, 115], {
-            type: 'line',
-            height: '70',
-            width: '100%',
-            lineWidth: '2',
-            lineColor: '#f3545d',
-            fillColor: 'rgba(243, 84, 93, .14)'
-        });
+        var myLegendContainer = document.getElementById("myChartLegend");
 
-        $('#lineChart3').sparkline([105, 103, 123, 100, 95, 105, 115], {
-            type: 'line',
-            height: '70',
-            width: '100%',
-            lineWidth: '2',
-            lineColor: '#ffa534',
-            fillColor: 'rgba(255, 165, 52, .14)'
+        // generate HTML legend
+        myLegendContainer.innerHTML = statisticsChart.generateLegend();
+
+        // bind onClick event to all LI-tags of the legend
+        var legendItems = myLegendContainer.getElementsByTagName("li");
+        for (var i = 0; i < legendItems.length; i += 1) {
+            legendItems[i].addEventListener("click", legendClickCallback, false);
+        }
+
+        var dailySalesChart = document
+            .getElementById("dailySalesChart")
+            .getContext("2d");
+
+        var myDailySalesChart = new Chart(dailySalesChart, {
+            type: "line",
+            data: {
+                labels: [
+                    "Januari",
+                    "Februari",
+                    "Maret",
+                    "April",
+                    "Mei",
+                    "Juni",
+                    "Juli",
+                    "Agustus",
+                    "September",
+                ],
+                datasets: [{
+                    label: "Sales Analytics",
+                    fill: !0,
+                    backgroundColor: "rgba(255,255,255,0.2)",
+                    borderColor: "#fff",
+                    borderCapStyle: "butt",
+                    borderDash: [],
+                    borderDashOffset: 0,
+                    pointBorderColor: "#fff",
+                    pointBackgroundColor: "#fff",
+                    pointBorderWidth: 1,
+                    pointHoverRadius: 5,
+                    pointHoverBackgroundColor: "#fff",
+                    pointHoverBorderColor: "#fff",
+                    pointHoverBorderWidth: 1,
+                    pointRadius: 1,
+                    pointHitRadius: 5,
+                    data: @json($daftarPenjualan->pluck('jumlah')),
+                }, ],
+            },
+            options: {
+                maintainAspectRatio: !1,
+                legend: {
+                    display: !1,
+                },
+                animation: {
+                    easing: "easeInOutBack",
+                },
+                scales: {
+                    yAxes: [{
+                        display: !1,
+                        ticks: {
+                            fontColor: "rgba(0,0,0,0.5)",
+                            fontStyle: "bold",
+                            beginAtZero: !0,
+                            maxTicksLimit: 10,
+                            padding: 0,
+                        },
+                        gridLines: {
+                            drawTicks: !1,
+                            display: !1,
+                        },
+                    }, ],
+                    xAxes: [{
+                        display: !1,
+                        gridLines: {
+                            zeroLineColor: "transparent",
+                        },
+                        ticks: {
+                            padding: -20,
+                            fontColor: "rgba(255,255,255,0.2)",
+                            fontStyle: "bold",
+                        },
+                    }, ],
+                },
+            },
         });
     </script>
 @endpush
