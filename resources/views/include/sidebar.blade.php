@@ -83,8 +83,8 @@
                                 </a>
                             </li>
                             <li>
-                                <a href="icon-menu.html">
-                                    <span class="sub-item">Icon Menu</span>
+                                <a href="{{ route('analisaAll') }}">
+                                    <span class="sub-item">Analisa All</span>
                                 </a>
                             </li>
                         </ul>

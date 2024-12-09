@@ -40,64 +40,61 @@
                     </div>
                 </div>
                 <div class="card-body">
-                    <form action="{{ route('store.penjualan') }}" method="POST">
+                    <form action="{{ route('storeAll.penjualan') }}" method="POST">
                         @csrf
                         <div class="form-group">
-                            <label for="jumlah" class="me-2">Pilih Alpha</label>
+                            <label for="jumlah" class="me-2">Ramal</label>
+                            <button type="submit" class="btn btn-success">Submit</button>
                             <div class="d-flex align-items-center">
-                                <div class="col-6">
-                                    <select class="form-control me-2" id="jumlah" name="jumlah">
-                                        <option value="">Pilih Alpha</option>
-                                        @foreach ($alphas as $alpha)
-                                            <option value="{{ $alpha }}"
-                                                {{ old('jumlah') == $alpha ? 'selected' : '' }}>Alpha {{ $alpha }}
-                                            </option>
-                                        @endforeach
-                                    </select>
-                                </div>
-                                <div class="col-6 mx-3">
-                                    <button type="submit" class="btn btn-success">Submit</button>
-                                    <button type="button" class="btn btn-warning" onclick="resetJumlah()">Reset</button>
+                                <div class="col-12 mx-3">
                                 </div>
                             </div>
                         </div>
-                    </form>
-                    <form action="{{ route('storeAll.penjualan') }}" method="POST" style="display:inline;">
-                        @csrf
-                        <button type="submit" class="btn btn-primary">Post All</button>
                     </form>
                     <hr>
 
                     @if (isset($dataPerhitungan) && count($dataPerhitungan) > 0)
                         <h5>Hasil Perhitungan</h5>
-                        <table class="table table-bordered mt-4">
-                            <thead>
-                                <tr>
-                                    <th>No</th>
-                                    <th>Bulan</th>
-                                    <th>Tahun</th>
-                                    <th>Data Aktual (At)</th>
-                                    <th>Forecast (Ft)</th>
-                                    <th>APE (%)</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                @foreach ($dataPerhitungan as $index => $row)
+                        <div class="table-responsive">
+                            <table class="table table-bordered mt-4">
+                                <thead>
                                     <tr>
-                                        <td>{{ $index + 1 }}</td>
-                                        <td>{{ $row['bulan'] }}</td>
-                                        <td>{{ $row['tahun'] }}</td>
-                                        <td>{{ $row['At'] }}</td>
-                                        <td>{{ $row['Ft'] }}</td>
-                                        <td>{{ $row['APE'] }}%</td>
+                                        <th>No</th>
+                                        <th>Bulan</th>
+                                        <th>Tahun</th>
+                                        <th>Data Aktual (At)</th>
+                                        @foreach ($dataPerhitungan as $alpha => $values)
+                                            <th>Forecast (Ft) ({{ $alpha }})</th>
+                                            <th>APE (%) ({{ $alpha }})</th>
+                                        @endforeach
                                     </tr>
-                                @endforeach
-                                <tr>
-                                    <td colspan="5" class="text-center"><strong>MAPE</strong></td>
-                                    <td><strong>{{ $mape }}%</strong></td>
-                                </tr>
-                            </tbody>
-                        </table>
+                                </thead>
+                                <tbody>
+                                    @php
+                                        $rowCount = count(current($dataPerhitungan)) - 1; // Minus 1 untuk 'total_mape'
+                                    @endphp
+                                    @for ($i = 0; $i < $rowCount; $i++)
+                                        <tr>
+                                            <td>{{ $i + 1 }}</td>
+                                            <td>{{ $dataPerhitungan[array_key_first($dataPerhitungan)][$i]['bulan'] }}</td>
+                                            <td>{{ $dataPerhitungan[array_key_first($dataPerhitungan)][$i]['tahun'] }}</td>
+                                            <td>{{ $dataPerhitungan[array_key_first($dataPerhitungan)][$i]['At'] }}</td>
+                                            @foreach ($dataPerhitungan as $alpha => $values)
+                                                <td>{{ $values[$i]['Ft'] }}</td>
+                                                <td>{{ $values[$i]['APE'] }}%</td>
+                                            @endforeach
+                                        </tr>
+                                    @endfor
+                                    <tr>
+                                        <td colspan="4" class="text-center"><strong>MAPE</strong></td>
+                                        @foreach ($dataPerhitungan as $alpha => $values)
+                                            <td colspan="2"><strong>{{ $values['total_mape'] }}%</strong></td>
+                                        @endforeach
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+
 
                         <div class="card-body">
                             <div class="chart-container" style="min-height: 300px">
@@ -106,6 +103,7 @@
                             <div id="myChartLegend"></div>
                         </div>
                     @endif
+
                 </div>
 
             </div>
@@ -118,7 +116,6 @@
     <link href="https://cdn.datatables.net/1.11.5/css/dataTables.bootstrap5.min.css" rel="stylesheet">
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.min.js"></script>
-    <script src="https://cdn.datatables.net/1.11.5/js/dataTables.bootstrap5.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
     <script>
@@ -140,33 +137,37 @@
         @if (isset($dataPerhitungan) && count($dataPerhitungan) > 0)
             var ctx = document.getElementById("statisticsChart").getContext("2d");
 
+            var datasets = [{
+                    label: "Aktual",
+                    borderColor: "#fdaf4b",
+                    pointBackgroundColor: "rgba(253, 175, 75, 0.6)",
+                    pointRadius: 5,
+                    backgroundColor: "rgba(253, 175, 75, 0.4)",
+                    legendColor: "#fdaf4b",
+                    fill: false,
+                    borderWidth: 2,
+                    data: @json($dataPenjualan->pluck('jumlah')),
+                },
+                @foreach ($dataPerhitungan as $alphaKey => $alphaData)
+                    {
+                        label: "Prediksi ({{ $alphaKey }})",
+                        borderColor: getColor('{{ $alphaKey }}'), // Warna dinamis
+                        pointBackgroundColor: getColor('{{ $alphaKey }}', 0.6),
+                        pointRadius: 5,
+                        backgroundColor: getColor('{{ $alphaKey }}', 0.4),
+                        legendColor: getColor('{{ $alphaKey }}'),
+                        fill: false,
+                        borderWidth: 2,
+                        data: @json(array_column($alphaData, 'Ft')),
+                    },
+                @endforeach
+            ];
+
             var statisticsChart = new Chart(ctx, {
                 type: "line",
                 data: {
-                    labels: @json(array_column($dataPerhitungan, 'bulan')),
-                    datasets: [{
-                            label: "Aktual",
-                            borderColor: "#fdaf4b",
-                            pointBackgroundColor: "rgba(253, 175, 75, 0.6)",
-                            pointRadius: 5,
-                            backgroundColor: "rgba(253, 175, 75, 0.4)",
-                            legendColor: "#fdaf4b",
-                            fill: false,
-                            borderWidth: 2,
-                            data: @json($dataPenjualan->pluck('jumlah')),
-                        },
-                        {
-                            label: "Prediksi",
-                            borderColor: "#f3545d",
-                            pointBackgroundColor: "rgba(243, 84, 93, 0.6)",
-                            pointRadius: 5,
-                            backgroundColor: "rgba(243, 84, 93, 0.4)",
-                            legendColor: "#f3545d",
-                            fill: false,
-                            borderWidth: 2,
-                            data: @json(array_column($dataPerhitungan, 'Ft'))
-                        },
-                    ],
+                    labels: @json(array_column($dataPerhitungan['a0.3'], 'bulan')), // Gunakan alpha pertama sebagai referensi
+                    datasets: datasets,
                 },
                 options: {
                     responsive: true,
@@ -195,15 +196,20 @@
                         yAxes: [{
                             ticks: {
                                 fontStyle: "500",
-                                beginAtZero: true,
-                                maxTicksLimit: 5,
                                 padding: 10,
+                                // Sesuaikan skala agar lebih terlihat perbedaan
+                                min: Math.min(...@json($dataPenjualan->pluck('jumlah'))) -
+                                    10, // Tambahkan margin ke bawah
+                                max: Math.max(...@json($dataPenjualan->pluck('jumlah'))) +
+                                    10, // Tambahkan margin ke atas
+                                stepSize: 10, // Atur step untuk memperjelas perbedaan antar nilai
                             },
                             gridLines: {
                                 drawTicks: false,
-                                display: false,
+                                display: true,
+                                color: "rgba(0,0,0,0.1)" // Tambahkan grid untuk memperjelas posisi
                             },
-                        }, ],
+                        }],
                         xAxes: [{
                             gridLines: {
                                 zeroLineColor: "transparent",
@@ -212,7 +218,7 @@
                                 padding: 10,
                                 fontStyle: "500",
                             },
-                        }, ],
+                        }],
                     },
                     legendCallback: function(chart) {
                         var text = [];
@@ -235,9 +241,19 @@
             });
 
             var myLegendContainer = document.getElementById("myChartLegend");
-
             myLegendContainer.innerHTML = statisticsChart.generateLegend();
+
+            // Fungsi untuk menentukan warna berdasarkan alpha
+            function getColor(alpha, opacity = 1) {
+                const colors = {
+                    'a0.3': `rgba(243, 84, 93, ${opacity})`,
+                    'a0.6': `rgba(54, 162, 235, ${opacity})`,
+                    'a0.9': `rgba(75, 192, 192, ${opacity})`,
+                };
+                return colors[alpha] || `rgba(201, 203, 207, ${opacity})`; // Default color
+            }
         @endif
+
         myLegendContainer.innerHTML = statisticsChart.generateLegend();
     </script>
 @endpush

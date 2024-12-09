@@ -22,6 +22,17 @@ class AnalisaController extends Controller
         return view('analisa.index', compact('penjualan', 'alphas'));
     }
 
+    public function indexAll()
+    {
+        // Ambil data dari tabel penjualan
+        $penjualan = Penjualan::all();
+
+        // Daftar alpha yang tersedia
+        $alphas = [0.3, 0.6, 0.8, 0.9];
+
+        return view('analisa.indexAll', compact('penjualan', 'alphas'));
+    }
+
     /**
      * Show the form for creating a new resource.
      */
@@ -87,12 +98,15 @@ class AnalisaController extends Controller
 
     public function calculate(Request $request)
     {
+        $daftarPenjualan = Penjualan::all();
         $alphas = $request->input('jumlah'); // Nilai alpha dari dropdown
         $dataPenjualan = Penjualan::orderBy('tahun', 'asc')->orderBy('bulan', 'asc')->get();
 
         $dataPerhitungan = [];
         $previousFt = null; // Ft sebelumnya
         $previousAt = null; // At sebelumnya
+        $totalAPE = 0; // Total APE
+        $n = 0; // Counter jumlah data
 
         foreach ($dataPenjualan as $index => $penjualan) {
             $currentAt = $penjualan->jumlah;
@@ -106,6 +120,8 @@ class AnalisaController extends Controller
                 $Ft = ($alphas * $previousAt) + ((1 - $alphas) * $previousFt);
                 // Hitung APE
                 $APE = abs(($currentAt - $Ft) / $currentAt) * 100;
+                $totalAPE += $APE; // Tambahkan ke total APE
+                $n++; // Increment jumlah data
             }
 
             $dataPerhitungan[] = [
@@ -131,12 +147,87 @@ class AnalisaController extends Controller
             'APE' => 0, // Tidak ada APE untuk prediksi
         ];
 
+        // Hitung total MAPE
+        $mape = $n > 0 ? $totalAPE / $n : 0;
+        // Return json
+        // return response()->json([
+        //     'dataPerhitungan' => $dataPerhitungan,
+        //     'mape' => round($mape, 2),
+        // ]);
         return view('analisa.index', [
             'dataPerhitungan' => $dataPerhitungan,
             'alphas' => [0.3, 0.6, 0.8, 0.9],
+            'mape' => round($mape, 2), // Kirim MAPE ke view
+            'dataPenjualan' => $daftarPenjualan,
         ]);
     }
 
+    public function calculateAll(Request $request)
+    {
+        $daftarPenjualan = Penjualan::all();
+        $alphas = [0.3, 0.6, 0.8, 0.9]; // Daftar alpha yang tersedia
+        $dataPenjualan = Penjualan::orderBy('tahun', 'asc')->orderBy('bulan', 'asc')->get();
+
+        $dataPerhitungan = [];
+        foreach ($alphas as $alpha) {
+            $previousFt = null; // Ft sebelumnya
+            $previousAt = null; // At sebelumnya
+            $totalAPE = 0; // Total APE
+            $n = 0; // Counter jumlah data
+
+            foreach ($dataPenjualan as $index => $penjualan) {
+                $currentAt = $penjualan->jumlah;
+
+                if ($index == 0) {
+                    // Ft pertama adalah At pertama
+                    $Ft = $currentAt;
+                    $APE = 0;
+                } else {
+                    // Hitung Ft berdasarkan rumus
+                    $Ft = ($alpha * $previousAt) + ((1 - $alpha) * $previousFt);
+                    // Hitung APE
+                    $APE = abs(($currentAt - $Ft) / $currentAt) * 100;
+                    $totalAPE += $APE; // Tambahkan ke total APE
+                    $n++; // Increment jumlah data
+                }
+
+                $dataPerhitungan['a' . $alpha][] = [
+                    'bulan' => $penjualan->bulan,
+                    'tahun' => $penjualan->tahun,
+                    'At' => $currentAt,
+                    'Ft' => round($Ft, 2),
+                    'APE' => round($APE, 2),
+                ];
+
+                // Simpan nilai sebelumnya untuk iterasi berikutnya
+                $previousFt = $Ft;
+                $previousAt = $currentAt;
+            }
+
+            // Prediksi bulan berikutnya
+            $prediksiFt = ($alpha * $previousAt) + ((1 - $alpha) * $previousFt);
+            $dataPerhitungan['a' . $alpha][] = [
+                'bulan' => 'Januari',
+                'tahun' => 2025,
+                'At' => 0, // Tidak ada data aktual
+                'Ft' => round($prediksiFt, 2),
+                'APE' => 0, // Tidak ada APE untuk prediksi
+            ];
+
+            // Hitung total MAPE
+            $mape[$alpha] = $n > 0 ? $totalAPE / $n : 0;
+
+            // Tambahkan total MAPE ke dataPerhitungan
+            $dataPerhitungan['a' . $alpha]['total_mape'] = round($mape[$alpha], 2);
+        }
+        
+        // dd($dataPerhitungan);
+        return view('analisa.indexAll', [
+            'dataPerhitungan' => $dataPerhitungan,
+            'alphas' => $alphas,
+            'dataPenjualan' => $daftarPenjualan,
+        ]);
+    }
 
 
     /**
