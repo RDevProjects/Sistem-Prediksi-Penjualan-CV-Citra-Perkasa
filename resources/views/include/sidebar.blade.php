@@ -69,7 +69,7 @@
                     </span>
                     <h4 class="text-section">Tools</h4>
                 </li>
-                <li class="nav-item {{ Route::is('analisis.*') ? 'active' : '' }}">
+                <li class="nav-item {{ Route::is('analisa.*') ? 'active' : '' }}">
                     <a data-bs-toggle="collapse" href="#sidebarLayouts">
                         <i class="far fa-chart-bar"></i>
                         <p>Analisis</p>
@@ -78,8 +78,8 @@
                     <div class="collapse" id="sidebarLayouts">
                         <ul class="nav nav-collapse">
                             <li>
-                                <a href="sidebar-style-2.html">
-                                    <span class="sub-item">Sidebar Style 2</span>
+                                <a href="{{ route('analisa') }}">
+                                    <span class="sub-item">Analisa</span>
                                 </a>
                             </li>
                             <li>

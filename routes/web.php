@@ -4,6 +4,7 @@ use App\Http\Controllers\LoginController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\PenjualanController;
+use App\Http\Controllers\AnalisaController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Middleware\isLogin;
 
@@ -31,6 +32,13 @@ Route::middleware([isLogin::class])->prefix('/dashboard')->group(function () {
         Route::put('/update/{id}', [PenjualanController::class, 'update'])->name('update.penjualan');
         Route::delete('/delete/{id}', [PenjualanController::class, 'destroy'])->name('delete.penjualan');
     });
+
+    Route::prefix('/analisa')->group(function () {
+        Route::get('/', [AnalisaController::class, 'index'])->name('analisa');
+    });
+
+    Route::post('/penjualan/store', [AnalisaController::class, 'calculate'])->name('store.penjualan');
+
 });
 
 
