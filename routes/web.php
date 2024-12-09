@@ -7,6 +7,10 @@ use App\Http\Controllers\PenjualanController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Middleware\isLogin;
 
+Route::get('/', function () {
+    return redirect('/dashboard');
+});
+
 Route::middleware([isLogin::class])->prefix('/dashboard')->group(function () {
     Route::get('/', [DashboardController::class, 'index'])->name('home');
     // Admin

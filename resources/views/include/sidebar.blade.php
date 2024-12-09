@@ -1,11 +1,12 @@
 <!-- Sidebar -->
-<div class="sidebar" data-background-color="grey">
+<div class="sidebar" data-background-color="dark">
     <div class="sidebar-logo">
         <!-- Logo Header -->
-        <div class="logo-header" data-background-color="dark2">
+        <div class="logo-header" data-background-color="grey">
 
-            <a href="{{ route('home') }}" class="text-white logo">
-                CV. Citra Perkasa
+            <a href="{{ route('home') }}" class="logo">
+                <img src="{{ asset('logo.png') }}" alt="CV. Citra Perkasa Logo" style="width: 50px; height: auto;">
+                <b>CV. Citra Perkasa</b>
             </a>
             <div class="nav-toggle">
                 <button class="btn btn-toggle toggle-sidebar">

@@ -1,11 +1,10 @@
 <div class="main-header">
     <div class="main-header-logo">
         <!-- Logo Header -->
-        <div class="logo-header" data-background-color="dark">
+        <div class="logo-header" data-background-color="grey">
 
             <a href="{{ route('home') }}" class="logo">
-                <img src="{{ asset('assets/img/kaiadmin/logo_light.svg') }}" alt="navbar brand" class="navbar-brand"
-                    height="20">
+                <img src="{{ asset('logo.png') }}" alt="navbar brand" class="navbar-brand" height="20">
             </a>
             <div class="nav-toggle">
                 <button class="btn btn-toggle toggle-sidebar">
