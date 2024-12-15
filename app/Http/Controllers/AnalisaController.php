@@ -207,15 +207,50 @@ class AnalisaController extends Controller
                 $previousAt = $currentAt;
             }
 
-            // Prediksi bulan berikutnya
-            $prediksiFt = ($alpha * $previousAt) + ((1 - $alpha) * $previousFt);
-            $dataPerhitungan['a' . $alpha][] = [
-                'bulan' => 'Januari',
-                'tahun' => 2025,
-                'At' => 0, // Tidak ada data aktual
-                'Ft' => round($prediksiFt, 2),
-                'APE' => 0, // Tidak ada APE untuk prediksi
+            // Prediksi bulan berikutnya (2/3 bulan ke depan)
+            // Ambil data terakhir dari database
+            $lastData = $dataPenjualan->last();
+            $lastMonth = $lastData->bulan;
+            $lastYear = $lastData->tahun;
+
+            // Mapping bulan ke angka
+            $months = [
+                'Januari' => 1, 'Februari' => 2, 'Maret' => 3, 'April' => 4,
+                'Mei' => 5, 'Juni' => 6, 'Juli' => 7, 'Agustus' => 8,
+                'September' => 9, 'Oktober' => 10, 'November' => 11, 'Desember' => 12
             ];
+
+            // Konversi bulan terakhir ke angka
+            $lastMonthNumber = $months[$lastMonth];
+
+            // Hitung bulan berikutnya
+            $nextMonths = [];
+            for ($i = 1; $i <= 3; $i++) {
+                $nextMonthNumber = $lastMonthNumber + $i;
+                $nextYear = $lastYear;
+                if ($nextMonthNumber > 12) {
+                    $nextMonthNumber -= 12;
+                    $nextYear++;
+                }
+                // Konversi angka bulan kembali ke nama bulan
+                $nextMonthName = array_search($nextMonthNumber, $months);
+                $nextMonths[] = [
+                    'bulan' => $nextMonthName,
+                    'tahun' => $nextYear,
+                ];
+            }
+
+            foreach ($nextMonths as $nextMonth) {
+                $prediksiFt = ($alpha * $previousAt) + ((1 - $alpha) * $previousFt);
+                $dataPerhitungan['a' . $alpha][] = [
+                    'bulan' => $nextMonth['bulan'],
+                    'tahun' => $nextMonth['tahun'],
+                    'At' => 0, // Tidak ada data aktual
+                    'Ft' => round($prediksiFt, 2),
+                    'APE' => 0, // Tidak ada APE untuk prediksi
+                ];
+                $previousFt = $prediksiFt; // Update previousFt for next prediction
+            }
 
             // Hitung total MAPE
             $mape[$alpha] = $n > 0 ? $totalAPE / $n : 0;
