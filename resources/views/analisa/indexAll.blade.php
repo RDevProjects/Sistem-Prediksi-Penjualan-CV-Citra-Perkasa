@@ -64,8 +64,8 @@
                                         <th>Tahun</th>
                                         <th>Data Aktual (At)</th>
                                         @foreach ($dataPerhitungan as $alpha => $values)
-                                            <th>Forecast (Ft) ({{ $alpha }})</th>
-                                            <th>APE (%) ({{ $alpha }})</th>
+                                            <th>Nilai Prediksi (Ft) ({{ $alpha }})</th>
+                                            <th>MAPE (%) ({{ $alpha }})</th>
                                         @endforeach
                                     </tr>
                                 </thead>
@@ -80,15 +80,18 @@
                                             <td>{{ $dataPerhitungan[array_key_first($dataPerhitungan)][$i]['tahun'] }}</td>
                                             <td>{{ $dataPerhitungan[array_key_first($dataPerhitungan)][$i]['At'] }}</td>
                                             @foreach ($dataPerhitungan as $alpha => $values)
-                                                <td>{{ $values[$i]['Ft'] }}</td>
-                                                <td>{{ $values[$i]['APE'] }}%</td>
+                                                <td class="text-end">{{ $values[$i]['Ft'] }}</td>
+                                                <td class="text-end">
+                                                    {{ $values[$i]['APE'] == 100 ? 0 : $values[$i]['APE'] }}%</td>
                                             @endforeach
                                         </tr>
                                     @endfor
                                     <tr>
                                         <td colspan="4" class="text-center"><strong>MAPE</strong></td>
                                         @foreach ($dataPerhitungan as $alpha => $values)
-                                            <td colspan="2"><strong>{{ $values['total_mape'] }}%</strong></td>
+                                            <td colspan="2" class="text-end">
+                                                <strong>{{ $values['total_mape'] }}%</strong>
+                                            </td>
                                         @endforeach
                                     </tr>
                                 </tbody>
@@ -166,7 +169,7 @@
             var statisticsChart = new Chart(ctx, {
                 type: "line",
                 data: {
-                    labels: @json(array_column($dataPerhitungan['a0.3'], 'bulan')), // Gunakan alpha pertama sebagai referensi
+                    labels: @json(array_column($dataPerhitungan['a0.1'], 'bulan')), // Gunakan alpha pertama sebagai referensi
                     datasets: datasets,
                 },
                 options: {
@@ -246,9 +249,9 @@
             // Fungsi untuk menentukan warna berdasarkan alpha
             function getColor(alpha, opacity = 1) {
                 const colors = {
-                    'a0.3': `rgba(243, 84, 93, ${opacity})`,
-                    'a0.6': `rgba(54, 162, 235, ${opacity})`,
-                    'a0.9': `rgba(75, 192, 192, ${opacity})`,
+                    'a0.1': `rgba(243, 84, 93, ${opacity})`,
+                    'a0.3': `rgba(54, 162, 235, ${opacity})`,
+                    'a0.5': `rgba(75, 192, 192, ${opacity})`,
                 };
                 return colors[alpha] || `rgba(201, 203, 207, ${opacity})`; // Default color
             }

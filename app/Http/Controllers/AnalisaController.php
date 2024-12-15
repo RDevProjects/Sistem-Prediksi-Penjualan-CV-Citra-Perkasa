@@ -165,7 +165,7 @@ class AnalisaController extends Controller
     public function calculateAll(Request $request)
     {
         $daftarPenjualan = Penjualan::all();
-        $alphas = [0.3, 0.6, 0.8, 0.9]; // Daftar alpha yang tersedia
+        $alphas = [0.1, 0.3, 0.5]; // Daftar alpha yang tersedia
         $dataPenjualan = Penjualan::orderBy('tahun', 'asc')->orderBy('bulan', 'asc')->get();
 
         $dataPerhitungan = [];
@@ -180,17 +180,20 @@ class AnalisaController extends Controller
 
                 if ($index == 0) {
                     // Ft pertama adalah At pertama
-                    $Ft = $currentAt;
+                    $Ft = 0;
                     $APE = 0;
+                } elseif ($index == 1) {
+                    // Ft kedua menggunakan data bulan pertama
+                    $Ft = $dataPenjualan[0]->jumlah;
                 } else {
                     // Hitung Ft berdasarkan rumus
                     $Ft = ($alpha * $previousAt) + ((1 - $alpha) * $previousFt);
-                    // Hitung APE
-                    $APE = abs(($currentAt - $Ft) / $currentAt) * 100;
-                    $totalAPE += $APE; // Tambahkan ke total APE
-                    $n++; // Increment jumlah data
                 }
-
+                // Hitung APE
+                $APE = abs(($currentAt - $Ft) / $currentAt) * 100;
+                $totalAPE += $APE; // Tambahkan ke total APE
+                $n++; // Increment jumlah data
+                
                 $dataPerhitungan['a' . $alpha][] = [
                     'bulan' => $penjualan->bulan,
                     'tahun' => $penjualan->tahun,
