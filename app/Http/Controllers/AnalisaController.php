@@ -225,7 +225,7 @@ class AnalisaController extends Controller
 
             // Hitung bulan berikutnya
             $nextMonths = [];
-            for ($i = 1; $i <= 3; $i++) {
+            for ($i = 1; $i <= 1; $i++) {
                 $nextMonthNumber = $lastMonthNumber + $i;
                 $nextYear = $lastYear;
                 if ($nextMonthNumber > 12) {
