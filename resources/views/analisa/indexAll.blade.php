@@ -42,13 +42,9 @@
                 <div class="card-body">
                     <form action="{{ route('storeAll.penjualan') }}" method="POST">
                         @csrf
-                        <div class="form-group">
-                            <label for="jumlah" class="me-2">Ramal</label>
-                            <button type="submit" class="btn btn-success">Submit</button>
-                            <div class="d-flex align-items-center">
-                                <div class="col-12 mx-3">
-                                </div>
-                            </div>
+                        <div class="form-group d-flex justify-content-between align-items-center">
+                            <label for="jumlah" class="me-2">Ramal Penjualan {{ env('APP_NAME') }}</label>
+                            <button type="submit" class="btn btn-success ms-auto">Submit</button>
                         </div>
                     </form>
                     <hr>

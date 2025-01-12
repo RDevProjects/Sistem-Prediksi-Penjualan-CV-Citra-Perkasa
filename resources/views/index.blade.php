@@ -83,7 +83,7 @@
                 <div class="card-header">
                     <div class="card-head-row">
                         <div class="card-title">Statik Penjualan</div>
-                        <div class="card-tools">
+                        {{-- <div class="card-tools">
                             <a href="#" class="btn btn-label-success btn-round btn-sm me-2">
                                 <span class="btn-label">
                                     <i class="fa fa-pencil"></i>
@@ -96,7 +96,7 @@
                                 </span>
                                 Print
                             </a>
-                        </div>
+                        </div> --}}
                     </div>
                 </div>
                 <div class="card-body">
