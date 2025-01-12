@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
 use App\Models\User;
 use App\Models\Penjualan;
 
@@ -15,6 +14,6 @@ class DashboardController extends Controller
 
         $daftarPenjualan = Penjualan::all();
 
-        return view('index', compact('userCount','penjualanCount','daftarPenjualan'));
+        return view('index', compact('userCount', 'penjualanCount', 'daftarPenjualan'));
     }
 }
