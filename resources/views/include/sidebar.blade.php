@@ -56,10 +56,10 @@
                         <p>Data Penjualan</p>
                     </a>
                 </li>
-                <li class="nav-item {{ Route::is('rekap') ? 'active' : '' }}">
-                    <a href="{{ route('home') }}">
+                <li class="nav-item {{ Route::is('rekap.*') ? 'active' : '' }}">
+                    <a href="{{ route('rekap') }}">
                         <i class="far fa-folder-open"></i>
-                        <p>Rekapitulasi Data Tahunan</p>
+                        <p>Rekapitulasi Data Analisa</p>
                     </a>
                 </li>
 

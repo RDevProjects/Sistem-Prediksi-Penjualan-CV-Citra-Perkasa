@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Request;
 use App\Models\Penjualan;
+use App\Models\DataAnalisa;
+use App\Models\HistoryPenjualan;
 
 class AnalisaController extends Controller
 {
@@ -193,7 +195,7 @@ class AnalisaController extends Controller
                 $APE = abs(($currentAt - $Ft) / $currentAt) * 100;
                 $totalAPE += $APE; // Tambahkan ke total APE
                 $n++; // Increment jumlah data
-                
+
                 $dataPerhitungan['a' . $alpha][] = [
                     'bulan' => $penjualan->bulan,
                     'tahun' => $penjualan->tahun,
@@ -215,9 +217,18 @@ class AnalisaController extends Controller
 
             // Mapping bulan ke angka
             $months = [
-                'Januari' => 1, 'Februari' => 2, 'Maret' => 3, 'April' => 4,
-                'Mei' => 5, 'Juni' => 6, 'Juli' => 7, 'Agustus' => 8,
-                'September' => 9, 'Oktober' => 10, 'November' => 11, 'Desember' => 12
+                'Januari' => 1,
+                'Februari' => 2,
+                'Maret' => 3,
+                'April' => 4,
+                'Mei' => 5,
+                'Juni' => 6,
+                'Juli' => 7,
+                'Agustus' => 8,
+                'September' => 9,
+                'Oktober' => 10,
+                'November' => 11,
+                'Desember' => 12
             ];
 
             // Konversi bulan terakhir ke angka
@@ -258,8 +269,11 @@ class AnalisaController extends Controller
             // Tambahkan total MAPE ke dataPerhitungan
             $dataPerhitungan['a' . $alpha]['total_mape'] = round($mape[$alpha], 2);
         }
-        
+
         // dd($dataPerhitungan);
+        // return response()->json([
+        //     'dataPerhitungan' => $dataPerhitungan,
+        // ]);
         return view('analisa.indexAll', [
             'dataPerhitungan' => $dataPerhitungan,
             'alphas' => $alphas,
@@ -267,7 +281,108 @@ class AnalisaController extends Controller
         ]);
     }
 
+    public function storeDataCalculated(Request $request)
+    {
+        $data = $request->getContent();
+        $data = json_decode($request->input('dataPerhitungan'), true);
 
+        // Ambil timestamp saat ini sekali saja
+        $currentTimestamp = now();
+
+        foreach ($data as $key => $months) {
+            $totalMAPE = $months['total_mape'];
+
+            foreach ($months as $index => $data) {
+                if (is_numeric($index)) {
+                    // Simpan data dengan timestamp yang sama
+                    DataAnalisa::create([
+                        'key' => $key,
+                        'bulan' => $data['bulan'],
+                        'tahun' => $data['tahun'],
+                        'At' => $data['At'],
+                        'Ft' => $data['Ft'],
+                        'APE' => $data['APE'],
+                        'total_mape' => $totalMAPE,
+                        'created_at' => $currentTimestamp, // Gunakan timestamp yang sama
+                        'updated_at' => $currentTimestamp, // Jika Anda ingin updated_at juga sama
+                    ]);
+                }
+            }
+        }
+
+        // Pindahkan data dari Penjualan ke HistoryPenjualan
+        $penjualanData = Penjualan::all();
+        foreach ($penjualanData as $penjualan) {
+            HistoryPenjualan::create([
+                'bulan' => $penjualan->bulan,
+                'tahun' => $penjualan->tahun,
+                'jumlah' => $penjualan->jumlah,
+                'created_at' => $currentTimestamp,
+                'updated_at' => $currentTimestamp,
+            ]);
+        }
+
+        // Hapus semua data dari Penjualan
+        Penjualan::truncate();
+
+        return redirect()->route('rekap')->with('success', 'Data berhasil disimpan.');
+    }
+
+    public function rekap()
+    {
+        // Mengambil nilai created_at yang unik
+        $data = DataAnalisa::select('created_at')
+            ->distinct()
+            ->orderBy('created_at') // Mengurutkan hasil berdasarkan created_at
+            ->get();
+
+        return view('rekap.index', compact('data'));
+    }
+
+    public function findRekap($timestamp)
+    {
+        // Ambil data berdasarkan timestamp
+        $data = DataAnalisa::where('created_at', $timestamp)->get();
+        dd($data);
+        return view('rekap.index', compact('data'));
+    }
+
+    public function rekapDetail(Request $request)
+    {
+        // Mengambil nilai created_at yang unik
+        $data = DataAnalisa::select('created_at')
+            ->distinct()
+            ->orderBy('created_at') // Mengurutkan hasil berdasarkan created_at
+            ->get();
+
+        $timestamp = $request->input('data');
+        $dataPerhitungan = DataAnalisa::where('created_at', $timestamp)->get();
+
+        // Struktur data yang diinginkan
+        $structuredData = [];
+        foreach ($dataPerhitungan as $item) {
+            $key = $item->key;
+            if (!isset($structuredData[$key])) {
+                $structuredData[$key] = [];
+            }
+            $structuredData[$key][] = [
+                'bulan' => $item->bulan,
+                'tahun' => $item->tahun,
+                'At' => $item->At,
+                'Ft' => $item->Ft,
+                'APE' => $item->APE,
+            ];
+            $structuredData[$key]['total_mape'] = $item->total_mape;
+        }
+
+        $dataPenjualan = HistoryPenjualan::where('created_at', $timestamp)->orderBy('tahun', 'asc')->orderBy('bulan', 'asc')->get();
+        // return response()->json([
+        //     // 'data' => $data,
+        //     'structuredData' => $structuredData,
+        //     'dataPenjualan' => $dataPenjualan,
+        // ]);
+        return view('rekap.index', compact('data', 'structuredData', 'dataPenjualan'));
+    }
     /**
      * Display the specified resource.
      */

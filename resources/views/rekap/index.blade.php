@@ -2,7 +2,7 @@
 
 @section('content')
     <div class="page-header">
-        <h3 class="mb-3 fw-bold">Data Peramalan</h3>
+        <h3 class="mb-3 fw-bold">Rekapitulasi Data Analisa</h3>
         <ul class="mb-3 breadcrumbs">
             <li class="nav-home">
                 <a href="#">
@@ -13,7 +13,7 @@
                 <i class="icon-arrow-right"></i>
             </li>
             <li class="nav-item">
-                <a href="{{ route('penjualan') }}">Data Peramalan</a>
+                <a href="{{ route('penjualan') }}">Rekapitulasi Data Analisa</a>
             </li>
         </ul>
     </div>
@@ -23,7 +23,7 @@
             <div class="card">
                 <div class="card-header">
                     <div class="d-flex justify-content-between align-items-center">
-                        <div class="card-title">Data Peramalan</div>
+                        <div class="card-title">Rekapitulasi Data Analisa</div>
                         <div>
                             @if (session('success'))
                                 <div class="alert alert-success">
@@ -40,16 +40,24 @@
                     </div>
                 </div>
                 <div class="card-body">
-                    <form action="{{ route('store.penjualan') }}" method="POST">
+                    <form action="{{ route('rekap.detail') }}" method="POST">
                         @csrf
-                        <div class="form-group d-flex justify-content-between align-items-center">
-                            <label for="jumlah" class="me-2">Ramal Penjualan {{ env('APP_NAME') }}</label>
-                            <button type="submit" class="btn btn-success ms-auto">Submit</button>
+                        <div class="form-group">
+                            <label for="jumlah" class="me-2">Rekap Analisa</label>
+                            <div class="d-flex justify-content-start align-items-center">
+                                <select name="data" class="form-control me-2 w-50"> <!-- Mengatur lebar menjadi 50% -->
+                                    <option value="" disabled selected>Pilih Tanggal Analisa</option>
+                                    @foreach ($data as $item)
+                                        <option value="{{ $item->created_at }}">{{ $item->created_at }}</option>
+                                    @endforeach
+                                </select>
+                                <button type="submit" class="btn btn-success ms-2">Cari Data</button>
+                            </div>
                         </div>
                     </form>
                     <hr>
 
-                    @if (isset($dataPerhitungan) && count($dataPerhitungan) > 0)
+                    @if (isset($structuredData) && count($structuredData) > 0)
                         <h5>Hasil Perhitungan</h5>
                         <div class="table-responsive">
                             <table class="table table-bordered mt-4">
@@ -59,7 +67,7 @@
                                         <th>Bulan</th>
                                         <th>Tahun</th>
                                         <th>Data Aktual (At)</th>
-                                        @foreach ($dataPerhitungan as $alpha => $values)
+                                        @foreach ($structuredData as $alpha => $values)
                                             <th>Nilai Prediksi (Ft) ({{ $alpha }})</th>
                                             <th>MAPE (%) ({{ $alpha }})</th>
                                         @endforeach
@@ -67,15 +75,15 @@
                                 </thead>
                                 <tbody>
                                     @php
-                                        $rowCount = count(current($dataPerhitungan)) - 1; // Minus 1 untuk 'total_mape'
+                                        $rowCount = count(current($structuredData)) - 1; // Minus 1 untuk 'total_mape'
                                     @endphp
                                     @for ($i = 0; $i < $rowCount; $i++)
                                         <tr>
                                             <td>{{ $i + 1 }}</td>
-                                            <td>{{ $dataPerhitungan[array_key_first($dataPerhitungan)][$i]['bulan'] }}</td>
-                                            <td>{{ $dataPerhitungan[array_key_first($dataPerhitungan)][$i]['tahun'] }}</td>
-                                            <td>{{ $dataPerhitungan[array_key_first($dataPerhitungan)][$i]['At'] }}</td>
-                                            @foreach ($dataPerhitungan as $alpha => $values)
+                                            <td>{{ $structuredData[array_key_first($structuredData)][$i]['bulan'] }}</td>
+                                            <td>{{ $structuredData[array_key_first($structuredData)][$i]['tahun'] }}</td>
+                                            <td>{{ $structuredData[array_key_first($structuredData)][$i]['At'] }}</td>
+                                            @foreach ($structuredData as $alpha => $values)
                                                 <td class="text-end">{{ $values[$i]['Ft'] }}</td>
                                                 <td class="text-end">
                                                     {{ $values[$i]['APE'] == 100 ? 0 : $values[$i]['APE'] }}%</td>
@@ -84,7 +92,7 @@
                                     @endfor
                                     <tr>
                                         <td colspan="4" class="text-center"><strong>MAPE</strong></td>
-                                        @foreach ($dataPerhitungan as $alpha => $values)
+                                        @foreach ($structuredData as $alpha => $values)
                                             <td colspan="2" class="text-end">
                                                 <strong>{{ $values['total_mape'] }}%</strong>
                                             </td>
@@ -100,14 +108,6 @@
                                 <canvas id="statisticsChart"></canvas>
                             </div>
                             <div id="myChartLegend"></div>
-                        </div>
-
-                        <div class="mt-3">
-                            <form id="saveForm" action="{{ route('store.data') }}" method="POST" class="w-100">
-                                @csrf
-                                <input type="hidden" name="dataPerhitungan" value="{{ json_encode($dataPerhitungan) }}">
-                                <button type="submit" class="btn btn-primary w-100">Simpan</button>
-                            </form>
                         </div>
                     @endif
 
@@ -141,7 +141,7 @@
             document.getElementById('jumlah').value = '';
         }
 
-        @if (isset($dataPerhitungan) && count($dataPerhitungan) > 0)
+        @if (isset($structuredData) && count($structuredData) > 0)
             var ctx = document.getElementById("statisticsChart").getContext("2d");
 
             var datasets = [{
@@ -155,7 +155,7 @@
                     borderWidth: 2,
                     data: @json($dataPenjualan->pluck('jumlah')),
                 },
-                @foreach ($dataPerhitungan as $alphaKey => $alphaData)
+                @foreach ($structuredData as $alphaKey => $alphaData)
                     {
                         label: "Prediksi ({{ $alphaKey }})",
                         borderColor: getColor('{{ $alphaKey }}'), // Warna dinamis
@@ -173,7 +173,7 @@
             var statisticsChart = new Chart(ctx, {
                 type: "line",
                 data: {
-                    labels: @json(array_column($dataPerhitungan['a0.1'], 'bulan')), // Gunakan alpha pertama sebagai referensi
+                    labels: @json(array_column($structuredData['a0.1'], 'bulan')), // Gunakan alpha pertama sebagai referensi
                     datasets: datasets,
                 },
                 options: {

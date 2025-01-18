@@ -50,7 +50,8 @@
                         <div class="col col-stats ms-3 ms-sm-0">
                             <div class="numbers">
                                 <p class="card-category">Penjualan</p>
-                                <h4 class="card-title">Rp 1,345</h4>
+                                <h4 class="card-title">
+                                    {{ number_format($daftarPenjualan->sum('jumlah') ?? 0, 0, ',', '.') }}</h4>
                             </div>
                         </div>
                     </div>
@@ -130,30 +131,16 @@
                 <div class="card-header">
                     <div class="card-head-row">
                         <div class="card-title">Rata-Rata Penjualan Perbulan</div>
-                        <div class="card-tools">
-                            <div class="dropdown">
-                                <button class="btn btn-sm btn-label-light dropdown-toggle" type="button"
-                                    id="dropdownMenuButton" data-bs-toggle="dropdown" aria-haspopup="true"
-                                    aria-expanded="false">
-                                    Export
-                                </button>
-                                <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                                    <a class="dropdown-item" href="#">Action</a>
-                                    <a class="dropdown-item" href="#">Another action</a>
-                                    <a class="dropdown-item" href="#">Something else here</a>
-                                </div>
-                            </div>
-                        </div>
                     </div>
-                    <div class="card-category">{{ $daftarPenjualan->first()->bulan }}
-                        {{ $daftarPenjualan->first()->tahun }}
+                    <div class="card-category">{{ $daftarPenjualan->first()->bulan ?? 'Belum ada data penjualan' }}
+                        {{ $daftarPenjualan->first()->tahun ?? '' }}
                         -
-                        {{ $daftarPenjualan->last()->bulan }} {{ $daftarPenjualan->last()->tahun }}
+                        {{ $daftarPenjualan->last()->bulan ?? '' }} {{ $daftarPenjualan->last()->tahun ?? '' }}
                     </div>
                 </div>
                 <div class="pb-0 card-body">
                     <div class="mt-2 mb-4">
-                        <h1>{{ number_format($daftarPenjualan->sum('jumlah'), 0, ',', '.') }}</h1>
+                        <h1>{{ number_format($daftarPenjualan->sum('jumlah') ?? 0, 0, ',', '.') }}</h1>
                     </div>
                     <div class="pull-in" style="min-height: 250px">
                         <canvas id="dailySalesChart"></canvas>

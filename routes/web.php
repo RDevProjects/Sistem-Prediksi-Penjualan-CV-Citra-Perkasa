@@ -38,6 +38,12 @@ Route::middleware([isLogin::class])->prefix('/dashboard')->group(function () {
         Route::get('/', [AnalisaController::class, 'indexAll'])->name('analisa');
         Route::post('/backup-store', [AnalisaController::class, 'calculate'])->name('store-backup.penjualan');
         Route::post('/store', [AnalisaController::class, 'calculateAll'])->name('store.penjualan');
+        Route::post('/store-data', [AnalisaController::class, 'storeDataCalculated'])->name('store.data');
+    });
+
+    Route::prefix('/rekap')->group(function () {
+        Route::get('/', [AnalisaController::class, 'rekap'])->name('rekap');
+        Route::post('/detail', [AnalisaController::class, 'rekapDetail'])->name('rekap.detail');
     });
 });
 
