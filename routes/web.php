@@ -34,13 +34,11 @@ Route::middleware([isLogin::class])->prefix('/dashboard')->group(function () {
     });
 
     Route::prefix('/analisa')->group(function () {
-        Route::get('/', [AnalisaController::class, 'index'])->name('analisa');
-        Route::get('/All', [AnalisaController::class, 'indexAll'])->name('analisaAll');
-        Route::post('/store', [AnalisaController::class, 'calculate'])->name('store.penjualan');
-        Route::post('/storeAll', [AnalisaController::class, 'calculateAll'])->name('storeAll.penjualan');
+        Route::get('/backup', [AnalisaController::class, 'index'])->name('analisabackup');
+        Route::get('/', [AnalisaController::class, 'indexAll'])->name('analisa');
+        Route::post('/backup-store', [AnalisaController::class, 'calculate'])->name('store-backup.penjualan');
+        Route::post('/store', [AnalisaController::class, 'calculateAll'])->name('store.penjualan');
     });
-
-
 });
 
 

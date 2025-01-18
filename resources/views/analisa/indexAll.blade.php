@@ -40,7 +40,7 @@
                     </div>
                 </div>
                 <div class="card-body">
-                    <form action="{{ route('storeAll.penjualan') }}" method="POST">
+                    <form action="{{ route('store.penjualan') }}" method="POST">
                         @csrf
                         <div class="form-group d-flex justify-content-between align-items-center">
                             <label for="jumlah" class="me-2">Ramal Penjualan {{ env('APP_NAME') }}</label>
@@ -100,6 +100,14 @@
                                 <canvas id="statisticsChart"></canvas>
                             </div>
                             <div id="myChartLegend"></div>
+                        </div>
+
+                        <div class="mt-3">
+                            <form action="{{ route('store.penjualan') }}" method="POST" class="w-100">
+                                @csrf
+                                <input type="text" name="dataPerhitungan" value="{{ json_encode($dataPerhitungan) }}">
+                                <button type="submit" class="btn btn-primary w-100">Simpan</button>
+                            </form>
                         </div>
                     @endif
 

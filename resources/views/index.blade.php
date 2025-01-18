@@ -78,6 +78,24 @@
         </div>
     </div>
     <div class="row">
+        <div class="col-md-12">
+            <div class="card card-round">
+                <div class="card-header">
+                    <div class="card-head-row card-tools-still-right">
+                        <div class="card-title">Dashboard</div>
+                    </div>
+                </div>
+                <div class="p-0 card-body">
+                    <div class="d-flex justify-content-center text-center">
+                        <span class="text-uppercase fw-bold fs-3 w-75 my-4">aplikasi prediksi penjualan produk apar di
+                            cv citra perkasa dengan
+                            metode peramalan exponential smoothing</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
         <div class="col-md-8">
             <div class="card card-round">
                 <div class="card-header">
@@ -127,7 +145,8 @@
                             </div>
                         </div>
                     </div>
-                    <div class="card-category">{{ $daftarPenjualan->first()->bulan }} {{ $daftarPenjualan->first()->tahun }}
+                    <div class="card-category">{{ $daftarPenjualan->first()->bulan }}
+                        {{ $daftarPenjualan->first()->tahun }}
                         -
                         {{ $daftarPenjualan->last()->bulan }} {{ $daftarPenjualan->last()->tahun }}
                     </div>
