@@ -100,72 +100,8 @@
         <div class="col-md-8">
             <div class="card card-round">
                 <div class="card-header">
-                    <div class="card-head-row">
-                        <div class="card-title">Statik Penjualan</div>
-                        {{-- <div class="card-tools">
-                            <a href="#" class="btn btn-label-success btn-round btn-sm me-2">
-                                <span class="btn-label">
-                                    <i class="fa fa-pencil"></i>
-                                </span>
-                                Export
-                            </a>
-                            <a href="#" class="btn btn-label-info btn-round btn-sm">
-                                <span class="btn-label">
-                                    <i class="fa fa-print"></i>
-                                </span>
-                                Print
-                            </a>
-                        </div> --}}
-                    </div>
-                </div>
-                <div class="card-body">
-                    <div class="chart-container" style="min-height: 300px">
-                        <canvas id="statisticsChart"></canvas>
-                    </div>
-                    <div id="myChartLegend"></div>
-                </div>
-            </div>
-        </div>
-        <div class="col-md-4">
-            <div class="card card-primary card-round">
-                <div class="card-header">
-                    <div class="card-head-row">
-                        <div class="card-title">Rata-Rata Penjualan Perbulan</div>
-                    </div>
-                    <div class="card-category">{{ $daftarPenjualan->first()->bulan ?? 'Belum ada data penjualan' }}
-                        {{ $daftarPenjualan->first()->tahun ?? '' }}
-                        -
-                        {{ $daftarPenjualan->last()->bulan ?? '' }} {{ $daftarPenjualan->last()->tahun ?? '' }}
-                    </div>
-                </div>
-                <div class="pb-0 card-body">
-                    <div class="mt-2 mb-4">
-                        <h1>{{ number_format($daftarPenjualan->sum('jumlah') ?? 0, 0, ',', '.') }}</h1>
-                    </div>
-                    <div class="pull-in" style="min-height: 250px">
-                        <canvas id="dailySalesChart"></canvas>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-    <div class="row">
-        <div class="col-md-12">
-            <div class="card card-round">
-                <div class="card-header">
                     <div class="card-head-row card-tools-still-right">
                         <div class="card-title">Riwayat Transaksi</div>
-                        <div class="card-tools">
-                            <div class="dropdown">
-                                <button class="btn btn-icon btn-clean me-0" type="button" id="dropdownMenuButton"
-                                    data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                    <i class="fas fa-ellipsis-h"></i>
-                                </button>
-                                <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                                    <a class="dropdown-item" href="#">Action</a>
-                                </div>
-                            </div>
-                        </div>
                     </div>
                 </div>
                 <div class="p-0 card-body">
@@ -209,119 +145,32 @@
                 </div>
             </div>
         </div>
+        <div class="col-md-4">
+            <div class="card card-primary card-round">
+                <div class="card-header">
+                    <div class="card-head-row">
+                        <div class="card-title">Rata-Rata Penjualan Perbulan</div>
+                    </div>
+                    <div class="card-category">{{ $daftarPenjualan->first()->bulan ?? 'Belum ada data penjualan' }}
+                        {{ $daftarPenjualan->first()->tahun ?? '' }}
+                        -
+                        {{ $daftarPenjualan->last()->bulan ?? '' }} {{ $daftarPenjualan->last()->tahun ?? '' }}
+                    </div>
+                </div>
+                <div class="pb-0 card-body">
+                    <div class="mt-2 mb-4">
+                        <h1>{{ number_format($daftarPenjualan->sum('jumlah') ?? 0, 0, ',', '.') }}</h1>
+                    </div>
+                    <div class="pull-in" style="min-height: 250px">
+                        <canvas id="dailySalesChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 @endsection
 @push('script')
     <script>
-        var ctx = document.getElementById("statisticsChart").getContext("2d");
-
-        var statisticsChart = new Chart(ctx, {
-            type: "line",
-            data: {
-                labels: ["Jan", "Feb", "Mar", "Apr", "Mei", "Jun", "Jul", "Agu", "Sep", "Okt", "Nov", "Des"],
-                datasets: [{
-                        label: "Penjualan",
-                        borderColor: "#f3545d",
-                        pointBackgroundColor: "rgba(243, 84, 93, 0.6)",
-                        pointRadius: 0,
-                        backgroundColor: "rgba(243, 84, 93, 0.4)",
-                        legendColor: "#f3545d",
-                        fill: true,
-                        borderWidth: 2,
-                        data: @json($daftarPenjualan->pluck('jumlah'))
-                    },
-                    {
-                        label: "Prediksi",
-                        borderColor: "#fdaf4b",
-                        pointBackgroundColor: "rgba(253, 175, 75, 0.6)",
-                        pointRadius: 0,
-                        backgroundColor: "rgba(253, 175, 75, 0.4)",
-                        legendColor: "#fdaf4b",
-                        fill: true,
-                        borderWidth: 2,
-                        data: [
-                            240, 270, 200, 220, 210, 190, 220, 210, 200, 250, 190, 220,
-                        ],
-                    },
-                ],
-            },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                legend: {
-                    display: false,
-                },
-                tooltips: {
-                    bodySpacing: 4,
-                    mode: "nearest",
-                    intersect: 0,
-                    position: "nearest",
-                    xPadding: 10,
-                    yPadding: 10,
-                    caretPadding: 10,
-                },
-                layout: {
-                    padding: {
-                        left: 5,
-                        right: 5,
-                        top: 15,
-                        bottom: 15
-                    },
-                },
-                scales: {
-                    yAxes: [{
-                        ticks: {
-                            fontStyle: "500",
-                            beginAtZero: false,
-                            maxTicksLimit: 5,
-                            padding: 10,
-                        },
-                        gridLines: {
-                            drawTicks: false,
-                            display: false,
-                        },
-                    }, ],
-                    xAxes: [{
-                        gridLines: {
-                            zeroLineColor: "transparent",
-                        },
-                        ticks: {
-                            padding: 10,
-                            fontStyle: "500",
-                        },
-                    }, ],
-                },
-                legendCallback: function(chart) {
-                    var text = [];
-                    text.push('<ul class="' + chart.id + '-legend html-legend">');
-                    for (var i = 0; i < chart.data.datasets.length; i++) {
-                        text.push(
-                            '<li><span style="background-color:' +
-                            chart.data.datasets[i].legendColor +
-                            '"></span>'
-                        );
-                        if (chart.data.datasets[i].label) {
-                            text.push(chart.data.datasets[i].label);
-                        }
-                        text.push("</li>");
-                    }
-                    text.push("</ul>");
-                    return text.join("");
-                },
-            },
-        });
-
-        var myLegendContainer = document.getElementById("myChartLegend");
-
-        // generate HTML legend
-        myLegendContainer.innerHTML = statisticsChart.generateLegend();
-
-        // bind onClick event to all LI-tags of the legend
-        var legendItems = myLegendContainer.getElementsByTagName("li");
-        for (var i = 0; i < legendItems.length; i += 1) {
-            legendItems[i].addEventListener("click", legendClickCallback, false);
-        }
-
         var dailySalesChart = document
             .getElementById("dailySalesChart")
             .getContext("2d");
