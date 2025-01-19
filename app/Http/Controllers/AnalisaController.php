@@ -289,13 +289,15 @@ class AnalisaController extends Controller
         // Ambil timestamp saat ini sekali saja
         $currentTimestamp = now();
 
+        // Simpan data analisa
+        $dataAnalisa = [];
         foreach ($data as $key => $months) {
             $totalMAPE = $months['total_mape'];
 
             foreach ($months as $index => $data) {
                 if (is_numeric($index)) {
-                    // Simpan data dengan timestamp yang sama
-                    DataAnalisa::create([
+                    // Siapkan data untuk batch insert
+                    $dataAnalisa[] = [
                         'key' => $key,
                         'bulan' => $data['bulan'],
                         'tahun' => $data['tahun'],
@@ -303,24 +305,32 @@ class AnalisaController extends Controller
                         'Ft' => $data['Ft'],
                         'APE' => $data['APE'],
                         'total_mape' => $totalMAPE,
-                        'created_at' => $currentTimestamp, // Gunakan timestamp yang sama
-                        'updated_at' => $currentTimestamp, // Jika Anda ingin updated_at juga sama
-                    ]);
+                        'created_at' => $currentTimestamp,
+                        'updated_at' => $currentTimestamp,
+                    ];
                 }
             }
         }
 
+        // Batch insert data analisa
+        DataAnalisa::insert($dataAnalisa);
+
         // Pindahkan data dari Penjualan ke HistoryPenjualan
         $penjualanData = Penjualan::all();
+        $historyPenjualan = [];
         foreach ($penjualanData as $penjualan) {
-            HistoryPenjualan::create([
+            // Siapkan data untuk batch insert
+            $historyPenjualan[] = [
                 'bulan' => $penjualan->bulan,
                 'tahun' => $penjualan->tahun,
                 'jumlah' => $penjualan->jumlah,
                 'created_at' => $currentTimestamp,
                 'updated_at' => $currentTimestamp,
-            ]);
+            ];
         }
+
+        // Batch insert data history penjualan
+        HistoryPenjualan::insert($historyPenjualan);
 
         // Hapus semua data dari Penjualan
         Penjualan::truncate();
