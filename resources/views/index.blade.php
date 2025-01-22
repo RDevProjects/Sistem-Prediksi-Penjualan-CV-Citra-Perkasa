@@ -110,7 +110,7 @@
                         <table class="table mb-0 align-items-center">
                             <thead class="thead-light">
                                 <tr>
-                                    <th scope="col">Payment Number</th>
+                                    <th scope="col">Id</th>
                                     <th scope="col">Bulan</th>
                                     <th scope="col" class="text-end">Tahun</th>
                                     <th scope="col" class="text-end">Jumlah Penjualan</th>
@@ -118,10 +118,13 @@
                                 </tr>
                             </thead>
                             <tbody>
+                                @php
+                                    $id = 1;
+                                @endphp
                                 @foreach ($daftarPenjualan as $penjualan)
                                     <tr>
                                         <th scope="row">
-                                            {{ $penjualan->id }}
+                                            {{ $id++ }}
                                         </th>
                                         <td>
                                             {{ $penjualan->bulan }}
