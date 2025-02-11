@@ -27,7 +27,7 @@ Route::middleware([isLogin::class])->prefix('/dashboard')->group(function () {
     Route::prefix('/penjualan')->group(function () {
         Route::get('/', [PenjualanController::class, 'index'])->name('penjualan');
         Route::get('/create', [PenjualanController::class, 'create'])->name('create.penjualan');
-        Route::post('/store', [PenjualanController::class, 'store'])->name('store.penjualan');
+        Route::post('/store', [PenjualanController::class, 'store'])->name('store.penjualanBarang');
         Route::get('/edit/{id}', [PenjualanController::class, 'edit'])->name('edit.penjualan');
         Route::put('/update/{id}', [PenjualanController::class, 'update'])->name('update.penjualan');
         Route::delete('/delete/{id}', [PenjualanController::class, 'destroy'])->name('delete.penjualan');

@@ -40,7 +40,6 @@ class UserController extends Controller
 
             return redirect()->route('admin')->with('success', 'Pengguna berhasil dibuat.');
         } catch (\Exception $e) {
-            dd($e);
             return redirect()->back()->withErrors(['error' => 'Terjadi kesalahan saat membuat pengguna: ' . $e->getMessage()]);
         }
     }

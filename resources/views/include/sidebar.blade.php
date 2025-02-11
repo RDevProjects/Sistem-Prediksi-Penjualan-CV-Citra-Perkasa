@@ -56,10 +56,10 @@
                         <p>Data Penjualan</p>
                     </a>
                 </li>
-                <li class="nav-item {{ Route::is('rekap.*') ? 'active' : '' }}">
+                <li class="nav-item {{ Route::is('rekap*') ? 'active' : '' }}">
                     <a href="{{ route('rekap') }}">
                         <i class="far fa-folder-open"></i>
-                        <p>Rekapitulasi Data Analisa</p>
+                        <p>Rekapitulasi Data</p>
                     </a>
                 </li>
 
@@ -72,7 +72,7 @@
                 <li class="nav-item {{ Route::is('analisa') ? 'active' : '' }}">
                     <a href="{{ route('analisa') }}">
                         <i class="far fa-chart-bar"></i>
-                        <p>Analisa</p>
+                        <p>Forecasting</p>
                     </a>
                 </li>
 

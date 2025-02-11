@@ -55,12 +55,12 @@ class PenjualanController extends Controller
             'jumlah' => $request->jumlah,
         ]);
 
-        return redirect()->route('penjualan')->with('success', 'Data berhasil diubah');
+        return redirect()->route('penjualan')->with('success', 'Data penjualan berhasil diperbarui.');
     }
 
     public function destroy($id)
     {
         Penjualan::find($id)->delete();
-        return redirect()->route('penjualan')->with('success', 'Data berhasil dihapus');
+        return redirect()->route('penjualan')->with('success', 'Data penjualan berhasil dihapus.');
     }
 }

@@ -2,7 +2,7 @@
 
 @section('content')
     <div class="page-header">
-        <h3 class="mb-3 fw-bold">Data Peramalan</h3>
+        <h3 class="mb-3 fw-bold">Peramalan</h3>
         <ul class="mb-3 breadcrumbs">
             <li class="nav-home">
                 <a href="#">
@@ -13,7 +13,7 @@
                 <i class="icon-arrow-right"></i>
             </li>
             <li class="nav-item">
-                <a href="{{ route('penjualan') }}">Data Peramalan</a>
+                <a href="{{ route('penjualan') }}">Peramalan</a>
             </li>
         </ul>
     </div>
@@ -23,7 +23,7 @@
             <div class="card">
                 <div class="card-header">
                     <div class="d-flex justify-content-between align-items-center">
-                        <div class="card-title">Data Peramalan</div>
+                        <div class="card-title">Peramalan</div>
                         <div>
                             @if (session('success'))
                                 <div class="alert alert-success">

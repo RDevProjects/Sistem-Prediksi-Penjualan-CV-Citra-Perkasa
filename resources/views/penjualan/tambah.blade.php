@@ -41,7 +41,7 @@
                     </div>
                 @endif
                 <div class="card-body">
-                    <form action="{{ route('store.penjualan') }}" method="POST">
+                    <form action="{{ route('store.penjualanBarang') }}" method="POST">
                         @csrf
                         <div class="form-group">
                             <label for="bulan">Bulan</label>
