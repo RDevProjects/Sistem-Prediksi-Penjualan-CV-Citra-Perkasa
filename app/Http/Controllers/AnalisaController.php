@@ -167,118 +167,122 @@ class AnalisaController extends Controller
     public function calculateAll(Request $request)
     {
         $daftarPenjualan = Penjualan::all();
-        $alphas = [0.1, 0.3, 0.5]; // Daftar alpha yang tersedia
-        $dataPenjualan = Penjualan::orderBy('tahun', 'asc')->orderBy('bulan', 'asc')->get();
+        if ($daftarPenjualan->isEmpty()) {
+            return view('analisa.indexAll')->with('error', 'Tidak bisa melakukan Forecasting dikarenakan "data penjualan kosong".');
+        } else {
+            $alphas = [0.1, 0.3, 0.5]; // Daftar alpha yang tersedia
+            $dataPenjualan = Penjualan::orderBy('tahun', 'asc')->orderBy('bulan', 'asc')->get();
 
-        $dataPerhitungan = [];
-        foreach ($alphas as $alpha) {
-            $previousFt = null; // Ft sebelumnya
-            $previousAt = null; // At sebelumnya
-            $totalAPE = 0; // Total APE
-            $n = 0; // Counter jumlah data
+            $dataPerhitungan = [];
+            foreach ($alphas as $alpha) {
+                $previousFt = null; // Ft sebelumnya
+                $previousAt = null; // At sebelumnya
+                $totalAPE = 0; // Total APE
+                $n = 0; // Counter jumlah data
 
-            foreach ($dataPenjualan as $index => $penjualan) {
-                $currentAt = $penjualan->jumlah;
+                foreach ($dataPenjualan as $index => $penjualan) {
+                    $currentAt = $penjualan->jumlah;
 
-                if ($index == 0) {
-                    // Ft pertama adalah At pertama
-                    $Ft = 0;
-                    $APE = 0;
-                } elseif ($index == 1) {
-                    // Ft kedua menggunakan data bulan pertama
-                    $Ft = $dataPenjualan[0]->jumlah;
-                } else {
-                    // Hitung Ft berdasarkan rumus
-                    $Ft = ($alpha * $previousAt) + ((1 - $alpha) * $previousFt);
+                    if ($index == 0) {
+                        // Ft pertama adalah At pertama
+                        $Ft = 0;
+                        $APE = 0;
+                    } elseif ($index == 1) {
+                        // Ft kedua menggunakan data bulan pertama
+                        $Ft = $dataPenjualan[0]->jumlah;
+                    } else {
+                        // Hitung Ft berdasarkan rumus
+                        $Ft = ($alpha * $previousAt) + ((1 - $alpha) * $previousFt);
+                    }
+                    // Hitung APE
+                    $APE = abs(($currentAt - $Ft) / $currentAt) * 100;
+                    $totalAPE += $APE; // Tambahkan ke total APE
+                    $n++; // Increment jumlah data
+
+                    $dataPerhitungan['a' . $alpha][] = [
+                        'bulan' => $penjualan->bulan,
+                        'tahun' => $penjualan->tahun,
+                        'At' => $currentAt,
+                        'Ft' => round($Ft, 2),
+                        'APE' => round($APE, 2),
+                    ];
+
+                    // Simpan nilai sebelumnya untuk iterasi berikutnya
+                    $previousFt = $Ft;
+                    $previousAt = $currentAt;
                 }
-                // Hitung APE
-                $APE = abs(($currentAt - $Ft) / $currentAt) * 100;
-                $totalAPE += $APE; // Tambahkan ke total APE
-                $n++; // Increment jumlah data
 
-                $dataPerhitungan['a' . $alpha][] = [
-                    'bulan' => $penjualan->bulan,
-                    'tahun' => $penjualan->tahun,
-                    'At' => $currentAt,
-                    'Ft' => round($Ft, 2),
-                    'APE' => round($APE, 2),
+                // Prediksi bulan berikutnya (2/3 bulan ke depan)
+                // Ambil data terakhir dari database
+                $lastData = $dataPenjualan->last();
+                $lastMonth = $lastData->bulan;
+                $lastYear = $lastData->tahun;
+
+                // Mapping bulan ke angka
+                $months = [
+                    'Januari' => 1,
+                    'Februari' => 2,
+                    'Maret' => 3,
+                    'April' => 4,
+                    'Mei' => 5,
+                    'Juni' => 6,
+                    'Juli' => 7,
+                    'Agustus' => 8,
+                    'September' => 9,
+                    'Oktober' => 10,
+                    'November' => 11,
+                    'Desember' => 12
                 ];
 
-                // Simpan nilai sebelumnya untuk iterasi berikutnya
-                $previousFt = $Ft;
-                $previousAt = $currentAt;
-            }
+                // Konversi bulan terakhir ke angka
+                $lastMonthNumber = $months[$lastMonth];
 
-            // Prediksi bulan berikutnya (2/3 bulan ke depan)
-            // Ambil data terakhir dari database
-            $lastData = $dataPenjualan->last();
-            $lastMonth = $lastData->bulan;
-            $lastYear = $lastData->tahun;
-
-            // Mapping bulan ke angka
-            $months = [
-                'Januari' => 1,
-                'Februari' => 2,
-                'Maret' => 3,
-                'April' => 4,
-                'Mei' => 5,
-                'Juni' => 6,
-                'Juli' => 7,
-                'Agustus' => 8,
-                'September' => 9,
-                'Oktober' => 10,
-                'November' => 11,
-                'Desember' => 12
-            ];
-
-            // Konversi bulan terakhir ke angka
-            $lastMonthNumber = $months[$lastMonth];
-
-            // Hitung bulan berikutnya
-            $nextMonths = [];
-            for ($i = 1; $i <= 1; $i++) {
-                $nextMonthNumber = $lastMonthNumber + $i;
-                $nextYear = $lastYear;
-                if ($nextMonthNumber > 12) {
-                    $nextMonthNumber -= 12;
-                    $nextYear++;
+                // Hitung bulan berikutnya
+                $nextMonths = [];
+                for ($i = 1; $i <= 1; $i++) {
+                    $nextMonthNumber = $lastMonthNumber + $i;
+                    $nextYear = $lastYear;
+                    if ($nextMonthNumber > 12) {
+                        $nextMonthNumber -= 12;
+                        $nextYear++;
+                    }
+                    // Konversi angka bulan kembali ke nama bulan
+                    $nextMonthName = array_search($nextMonthNumber, $months);
+                    $nextMonths[] = [
+                        'bulan' => $nextMonthName,
+                        'tahun' => $nextYear,
+                    ];
                 }
-                // Konversi angka bulan kembali ke nama bulan
-                $nextMonthName = array_search($nextMonthNumber, $months);
-                $nextMonths[] = [
-                    'bulan' => $nextMonthName,
-                    'tahun' => $nextYear,
-                ];
+
+                foreach ($nextMonths as $nextMonth) {
+                    $prediksiFt = ($alpha * $previousAt) + ((1 - $alpha) * $previousFt);
+                    $dataPerhitungan['a' . $alpha][] = [
+                        'bulan' => $nextMonth['bulan'],
+                        'tahun' => $nextMonth['tahun'],
+                        'At' => 0, // Tidak ada data aktual
+                        'Ft' => round($prediksiFt, 2),
+                        'APE' => 0, // Tidak ada APE untuk prediksi
+                    ];
+                    $previousFt = $prediksiFt; // Update previousFt for next prediction
+                }
+
+                // Hitung total MAPE
+                $mape[$alpha] = $n > 0 ? $totalAPE / $n : 0;
+
+                // Tambahkan total MAPE ke dataPerhitungan
+                $dataPerhitungan['a' . $alpha]['total_mape'] = round($mape[$alpha], 2);
             }
 
-            foreach ($nextMonths as $nextMonth) {
-                $prediksiFt = ($alpha * $previousAt) + ((1 - $alpha) * $previousFt);
-                $dataPerhitungan['a' . $alpha][] = [
-                    'bulan' => $nextMonth['bulan'],
-                    'tahun' => $nextMonth['tahun'],
-                    'At' => 0, // Tidak ada data aktual
-                    'Ft' => round($prediksiFt, 2),
-                    'APE' => 0, // Tidak ada APE untuk prediksi
-                ];
-                $previousFt = $prediksiFt; // Update previousFt for next prediction
-            }
-
-            // Hitung total MAPE
-            $mape[$alpha] = $n > 0 ? $totalAPE / $n : 0;
-
-            // Tambahkan total MAPE ke dataPerhitungan
-            $dataPerhitungan['a' . $alpha]['total_mape'] = round($mape[$alpha], 2);
+            // dd($dataPerhitungan);
+            // return response()->json([
+            //     'dataPerhitungan' => $dataPerhitungan,
+            // ]);
+            return view('analisa.indexAll', [
+                'dataPerhitungan' => $dataPerhitungan,
+                'alphas' => $alphas,
+                'dataPenjualan' => $daftarPenjualan,
+            ]);
         }
-
-        // dd($dataPerhitungan);
-        // return response()->json([
-        //     'dataPerhitungan' => $dataPerhitungan,
-        // ]);
-        return view('analisa.indexAll', [
-            'dataPerhitungan' => $dataPerhitungan,
-            'alphas' => $alphas,
-            'dataPenjualan' => $daftarPenjualan,
-        ]);
     }
 
     public function storeDataCalculated(Request $request)
