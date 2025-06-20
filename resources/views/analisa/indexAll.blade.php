@@ -76,9 +76,12 @@
                                             <td>{{ $dataPerhitungan[array_key_first($dataPerhitungan)][$i]['tahun'] }}</td>
                                             <td>{{ $dataPerhitungan[array_key_first($dataPerhitungan)][$i]['At'] }}</td>
                                             @foreach ($dataPerhitungan as $alpha => $values)
-                                                <td class="text-end">{{ $values[$i]['Ft'] }}</td>
                                                 <td class="text-end">
-                                                    {{ $values[$i]['APE'] == 100 ? 0 : $values[$i]['APE'] }}%</td>
+                                                    {{ $i == 0 ? 0 : $values[$i]['Ft'] }}
+                                                </td>
+                                                <td class="text-end">
+                                                    {{ $values[$i]['APE'] == 100 ? 0 : $values[$i]['APE'] }}%
+                                                </td>
                                             @endforeach
                                         </tr>
                                     @endfor

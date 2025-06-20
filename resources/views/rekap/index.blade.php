@@ -84,9 +84,12 @@
                                             <td>{{ $structuredData[array_key_first($structuredData)][$i]['tahun'] }}</td>
                                             <td>{{ $structuredData[array_key_first($structuredData)][$i]['At'] }}</td>
                                             @foreach ($structuredData as $alpha => $values)
-                                                <td class="text-end">{{ $values[$i]['Ft'] }}</td>
                                                 <td class="text-end">
-                                                    {{ $values[$i]['APE'] == 100 ? 0 : $values[$i]['APE'] }}%</td>
+                                                    {{ $i == 0 ? 0 : $values[$i]['Ft'] }}
+                                                </td>
+                                                <td class="text-end">
+                                                    {{ $values[$i]['APE'] == 100 ? 0 : $values[$i]['APE'] }}%
+                                                </td>
                                             @endforeach
                                         </tr>
                                     @endfor
