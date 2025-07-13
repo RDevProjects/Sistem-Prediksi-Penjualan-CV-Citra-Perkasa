@@ -253,11 +253,18 @@
             // Fungsi untuk menentukan warna berdasarkan alpha
             function getColor(alpha, opacity = 1) {
                 const colors = {
-                    'a0.1': `rgba(243, 84, 93, ${opacity})`,
-                    'a0.3': `rgba(54, 162, 235, ${opacity})`,
-                    'a0.5': `rgba(75, 192, 192, ${opacity})`,
+                    'a0.1': `rgba(230, 25, 75, ${opacity})`, // Merah
+                    'a0.2': `rgba(60, 180, 75, ${opacity})`, // Hijau terang
+                    'a0.3': `rgba(0, 130, 200, ${opacity})`, // Biru laut
+                    'a0.4': `rgba(245, 130, 48, ${opacity})`, // Oranye
+                    'a0.5': `rgba(145, 30, 180, ${opacity})`, // Ungu tua
+                    'a0.6': `rgba(70, 240, 240, ${opacity})`, // Cyan terang
+                    'a0.7': `rgba(240, 50, 230, ${opacity})`, // Magenta
+                    'a0.8': `rgba(210, 245, 60, ${opacity})`, // Hijau kuning
+                    'a0.9': `rgba(250, 190, 190, ${opacity})`, // Pink pucat
                 };
-                return colors[alpha] || `rgba(201, 203, 207, ${opacity})`; // Default color
+
+                return colors[alpha] || `rgba(160, 160, 160, ${opacity})`; // Warna default abu-abu netral
             }
         @endif
 

@@ -170,7 +170,7 @@ class AnalisaController extends Controller
         if ($daftarPenjualan->isEmpty()) {
             return view('analisa.indexAll')->with('error', 'Tidak bisa melakukan Forecasting dikarenakan "data penjualan kosong".');
         } else {
-            $alphas = [0.1, 0.3, 0.5]; // Daftar alpha yang tersedia
+            $alphas = [0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9]; // Daftar alpha yang tersedia
             $dataPenjualan = Penjualan::orderBy('tahun', 'asc')->orderBy('bulan', 'asc')->get();
 
             $dataPerhitungan = [];
