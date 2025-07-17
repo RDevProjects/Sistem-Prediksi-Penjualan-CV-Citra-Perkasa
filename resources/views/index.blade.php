@@ -81,26 +81,27 @@
     <div class="row">
         <div class="col-md-12">
             <div class="card card-round">
-                <div class="card-header">
+                <div class="card-header bg-primary">
                     <div class="card-head-row card-tools-still-right">
-                        <div class="card-title">Dashboard</div>
+                        <div class="card-title text-light">Pengertian Peramalan Single Exponential Smoothing</div>
                     </div>
                 </div>
                 <div class="p-0 card-body">
                     <div class="d-flex justify-content-start ms-4 text-start">
                         <div class="w-75 my-4 text-justify">
-                            <span class="text-uppercase fw-bold fs-3">Pengertian Peramalan Single Exponential Smoothing</span>
-                            <br><br>
-                            Metode Peramalan Exponential Smoothing atau Penghalusan eksponensial (Penghalusan bertingkat) ini banyak digunakan untuk meramalkan permintaan barang (demand) yang perubahannya sangat cepat.<br><br>
+                            {{-- <span class="text-uppercase fw-bold fs-3">Pengertian Peramalan Single Exponential Smoothing</span> --}}
+                            Metode Peramalan Exponential Smoothing atau Penghalusan eksponensial (Penghalusan bertingkat) ini banyak digunakan untuk meramalkan permintaan barang (demand) yang perubahannya sangat cepat.<br>
                             Peramalan dengan Exponential Smoothing atau Metode Penghalusan Eksponensial ini cukup mudah, yaitu dengan memasukan prakiraan permintaan sekarang dengan data permintaan nyata atau data permintaan aktual ke dalam rumus Exponential Smoothing.<br><br>
                             <b>Rumus Exponential Smoothing (Penghalusan Eksponensial):</b><br>
                             <span class="d-block my-2" style="font-size:1.2em; font-family:monospace;">Ft = Ft-1 + α (Dt-1 - Ft-1)</span>
                             <br>
                             Dimana:<br>
-                            Ft = Prakiraan Permintaan sekarang<br>
-                            Ft-1 = Prakiraan Permintaan yang lalu<br>
-                            α = Konstanta Eksponensial<br>
-                            Dt-1 = Permintaan Nyata
+                            <ul>
+                                <li>Ft = Prakiraan Permintaan sekarang</li>
+                                <li>Ft-1 = Prakiraan Permintaan yang lalu</li>
+                                <li>α = Konstanta Eksponensial</li>
+                                <li>Dt-1 = Permintaan Nyata</li>
+                            </ul>
                         </div>
                     </div>
                 </div>
