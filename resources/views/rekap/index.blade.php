@@ -109,6 +109,27 @@
                             </div>
                             <div id="myChartLegend"></div>
                         </div>
+
+                        {{-- KESIMPULAN DINAMIS --}}
+                        @php
+                            // Ambil semua total_mape dan alpha
+                            $mapeList = [];
+                            foreach ($structuredData as $alpha => $values) {
+                                $mapeList[$alpha] = $values['total_mape'];
+                            }
+                            $minMape = min($mapeList);
+                            // Cari semua alpha dengan MAPE terkecil
+                            $bestAlphas = array_keys($mapeList, $minMape);
+                            // Format alpha (tanpa 'a' di depan)
+                            $bestAlphaLabels = array_map(function($a) { return str_replace('a', '', $a); }, $bestAlphas);
+                            // Gabungkan alpha
+                            $bestAlphaString = implode(' dan ', $bestAlphaLabels);
+                        @endphp
+                        <div class="alert alert-info mt-4">
+                            <strong>Kesimpulan:</strong><br>
+                            Berdasarkan hasil perhitungan MAPE pada tabel data analisa, metode dengan alpha {{ $bestAlphaString }} memiliki nilai MAPE terkecil yaitu {{ number_format($minMape, 2) }}%, sehingga dapat disimpulkan bahwa {{ count($bestAlphaLabels) > 1 ? 'kedua metode tersebut' : 'metode tersebut' }} menghasilkan prediksi terbaik.
+                        </div>
+                        {{-- END KESIMPULAN DINAMIS --}}
                     @endif
 
                 </div>
